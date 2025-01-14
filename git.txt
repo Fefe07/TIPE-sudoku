@@ -1,0 +1,13 @@
+ajouter de nouveaux fichiers:
+git add -A
+
+commit des fichiers localement
+git commit -m 'mon message :3'
+
+upload sur github
+git push
+
+
+
+autre
+appeler anatole

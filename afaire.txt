@@ -1,0 +1,52 @@
+~~ Fonction principale ~~
+
+- strates de difficulté (coucou la géologie) :
+	classer les fonctions par groupe et voir organigramme diapo
+		- les plus durs d'abord ou les plus simples 
+		- rapport difficulté pure ou difficulté/efficacité -> voir ce qu'est qu'une technique efficace
+		- par façon de parcourir la grille : réfléchit-on sut un chiffre précis / une case précise / une zone précise ? 
+
+- méthodes des coefficients
+	(récolter des articles avec des coeffs afin d'avoir une base à tester )
+	- tout à 1 (mais ça va pas être ouf c'est juste pour voir) -> revient au nombre de technique utilisé 
+	- tester la base de données (regression linéaire)
+	- coeff de la première utilisation (ça change quoi ?)
+	-  
+
+- comparer avec une évaluation par algorithme autre 
+	- backtrack / sat solver -> temps de résolution ?
+	- notation en ligne 
+
+- prendre en compte le nombre d'endroits où l'on peut appliquer une technique 
+
+
+liens vers le drive 
+
+
+https://drive.google.com/drive/folders/1sh05Ta2J3n5w5c3wKhBdnAxnMR2rxzFU?usp=drive_lin
+
+classement des fonctions :
+	niveau 1 : trop facile ça !
+	- last free cell (1)  								(plutot par zones)
+	- last possible number = naked single 				(case par case)
+	- last remaining cell = hidden single 				(chiffre par chiffre)
+	- 
+	Passage aux notes : augmente momentanéement la difficulté, 
+	mais les techniques naked Single et Hidden Single deviennent plus faciles 
+	niveau 2 : je m'y connais en sudoku moi !
+	- naked pair 										(par zones)
+	- hidden pair 										(par zones (et paires de chiffres))
+	- pointing pair										(par chiffre (+) ou par zones)
+	(plus facile que le hidden pair, mais apparament moins efficace)						
+	- pointing triple (même difficulté)    				(par chiffre (+) ou par zones)
+	- box Line Reduction 								(par chiffre (+) ou par zones)
+	(même idée que pointing triple)						
+	- naked triples										(par zones)
+	- hidden triples									(par zones (et paires de chiffres))
+
+niveau 3 : je suis trop fort, vous ne pouvez rien contre ma puissance mouahahahahah !
+	- X-wing											(par chiffre, par type de zone)
+	- Y-wing											(par cases contenant deux notes)
+	- Swordfish											(par chiffre, par typre de zone (X-wing à trois zones))
+
+	

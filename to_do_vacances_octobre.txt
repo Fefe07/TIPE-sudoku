@@ -1,0 +1,39 @@
+TO-DO LIST VACANCES
+
+Tests sur l'évaluateur : 
+	classer les fonctions par groupe 
+	 - les plus durs d'abord ou les plus simples 
+	 - rapport difficulté pure ou difficulté/efficacité -> voir ce qu'est qu'une technique efficace
+	 - par façon de parcourir la grille : réfléchit-on sut un chiffre précis / une case précise / une zone précise ? 
+	
+	
+	- méthodes des coefficients
+		- tester la base de données (regression linéaire)
+		- coeff de la première utilisation (ça change quoi ?)
+		
+	- prendre en compte le nombre d'endroits où l'on peut appliquer une technique 
+
+	- Critères pour estimer la fiabilité : 
+		- Comparaison avec d'autres algos : backtrack / sat solver (bof), autres algos de référence
+		A TROUVER
+-> OBJECTIF : Avoir fini l'évaluateur
+
+
+
+Que faire avec : 
+- Trouver des patterns/critères de difficulté : 
+	- Nombre d'indices
+	- Nombre de notes
+	- Alignement des indices (lié au nombre de notes ?) 
+	/ Répartition des chiffres entre les zones (= ou disparate)
+	- Répartition des chiffres parmi les indices (3 de chaque vs. 6 de l'un, pas de l'autre)
+	- Répartition des notes dans les cases (mouais, ça revient à une recherche de nakedSingle)
+	- Symétries (diagonale / 90° / 180°)
+	- Ouverture 
+
+
+
+
+- S'intéresser au SET
+
+
