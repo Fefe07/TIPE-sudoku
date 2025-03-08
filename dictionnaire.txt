@@ -1,6 +1,0 @@
-Définition des termes :
- - groupe : ligne ou colonne ou zone
- - indice : chiffre ou valeur posé et valide dans la grille
- - notes  : valeurs possible mais non définitive d'une case ( = candidat ? )
- - zone   : carré 3*3
- 
