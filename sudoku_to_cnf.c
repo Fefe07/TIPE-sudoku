@@ -275,15 +275,15 @@ k_cnf sudoku_to_cnf(int** grid){
         clauses_redimensionne[i]=clauses[i];
     }
 
-    // /* Mettre des free ! */
-    // for(int i = 0; i<m; i++){
-    //     free_clause(clauses[i]);
-    // }
-    // free(clauses);
-    // for(int i =0; i<324; i++){
-    //     free_clause_1in9(clauses_1in9[i]);
-    // }
-    // free(clauses_1in9);
+    /* Mettre des free ! */
+    for(int i = 0; i<m; i++){
+        free_clause(clauses[i]);
+    }
+    free(clauses);
+    for(int i =0; i<324; i++){
+        free_clause_1in9(clauses_1in9[i]);
+    }
+    free(clauses_1in9);
 
     int k = 9;
     k_cnf f = malloc(sizeof(struct k_cnf_s));
