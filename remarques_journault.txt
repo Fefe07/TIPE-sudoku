@@ -1,3 +1,0 @@
-remarques soutenance TIPE :
-- L'algo finit t-il ?
--> Finir par backtracking...
