@@ -1,6 +1,7 @@
 #include<stdlib.h>
 #include<assert.h>
 #include<stdbool.h>
+#include<stdio.h>
 
 typedef struct var_s{
     /* Une variable est de la forme p_i,j,k, elle indique si la case i,j contient k */
@@ -38,12 +39,16 @@ typedef struct k_cnf_s* k_cnf;
 
 void free_clause(clause c);
 k_cnf sudoku_to_cnf(int** grid);
+void printGrid(int** grid);
+void print_k_cnf(k_cnf f);
 
 float assess_cnf(int** grid){
+    //printGrid(grid);
     k_cnf f = sudoku_to_cnf(grid);
     // on compte les variables
     int n = 0;
     int m = f->m ;
+    //print_k_cnf(f);
     bool*** existing_variables = malloc(9*sizeof(bool**));
     assert(existing_variables!=NULL);
     for(int i = 0; i<9; i++){
@@ -77,5 +82,6 @@ float assess_cnf(int** grid){
     }
     free(f->clauses);
     free(f);
+    assert(n>0);
     return (1.*m)/n;
 }

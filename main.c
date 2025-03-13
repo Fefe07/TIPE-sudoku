@@ -99,6 +99,9 @@ typedef struct k_cnf_s* k_cnf;
 
 k_cnf sudoku_to_cnf(int** grid);
 void print_k_cnf(k_cnf f);
+float assess_cnf(int** grid);
+
+float assess_techniques(int** grid, float* coeffs, float* coeffs_used);
 
 
 int group(int i, int j) { return 3 * (i / 3) + j / 3; }
@@ -189,7 +192,7 @@ int main() {
 		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
 		//printGrid(g.grid);
-		difficulties[nbGrille] = (g.D_TR-average_dtr)* (g.D_TR-average_dtr);
+		difficulties[nbGrille] = g.D_TR;
 
 		float *nb_tech = malloc(13 * sizeof(float));
 		for (int i = 0; i < 13; i++) {
@@ -208,11 +211,11 @@ int main() {
 	fclose(f);
 	printf("Coucou\n");
 
+	/* Calcul des coefficients par descente de gradient au formalisme douteux */
 	float cout = calcule_cout(coeffs, coeffs_used, results, difficulties, results_size);
 	float ancien_cout = cout + 42;
 	int i = 0;
 	while (ancien_cout > cout) {
-		
 		ancien_cout = cout ;
 		for (int j = 0; j <13; j++) {
 			//for (int k = 0; k < 100; k++) {
@@ -257,56 +260,24 @@ int main() {
 		}
 		i++;
 	}
+	printf("Coucou\n");
 
 	int** grid42 = grid_of_string("081600090000000000004037600600400500030000070007002004005210300000000000070004810");
-	k_cnf g = sudoku_to_cnf(grid42);
-	print_k_cnf(g); 
+	k_cnf h = sudoku_to_cnf(grid42);
+	print_k_cnf(h); 
 	printGrid(grid42);
 
-	/*
-	for(int nbGrille = 2; nbGrille<=2; nbGrille++){
-			difficulty = 0;
-			int** grid42 = lecture(nbGrille);
-			printGrid(grid42);
-
-			bool finished ;
-			finished = solve(grid42);
-			//printf("%d\n", finished);
-			printGrid(grid42);
-			if(finished==false){
-					printf(" on utilise les notes\n");
-					bool ***notes = createNotes();
-					// notes[i][j][k] == true si la case ij peut accueillir l'indice k+1
-
-					for (int i = 0; i < 9; i++) {
-							for (int j = 0; j < 9; j++) {
-									updateNotes(grid42, notes, i, j);
-							}
-					}
-
-
-					finished = solve_notes(grid42, notes, nb_tech);
-					printGrid(grid42);
-					print_tab(nb_tech, 10);
-					// si les techniques ne suffisent pas,
-					// on passe au backtracking
-					if (!finished){
-							finished = backtrack(grid42, notes, nb_tech);
-							assert(finished);
-					}
-					//printGrid(grid42);
-			}
-			print_tab(nb_tech, 10);
-			float diff = 0;
-			for(int i = 0; i<10; i++){
-					diff += nb_tech[i] * coeffs[i] ;
-			}
-			//printGrid(grid42);
-			//printf("Fini !\n");
-			printf("nbGrille = %d; difficulty = %.1f\n", nbGrille, diff);
+	FILE* g = fopen("results_sudoku_evaluated.txt", "w");
+	for(int i = 0; i<100; i++){
+		/* La résolution altère la grille donnée en argument*/
+		grid_diffs g1 = lecture_db_diffs(i+2, "grilles/Bases_de_donnees_evaluees.csv");
+		grid_diffs g2 = lecture_db_diffs(i+2, "grilles/Bases_de_donnees_evaluees.csv");
+		float f1 = assess_techniques(g1.grid, coeffs, coeffs_used);
+		float f2 = assess_cnf(g2.grid);
+		fprintf(g, "%f ; %f ; %f ; %f\n",g1.D_TR,g1.D_TO, f1, f2);
 	}
-	*/
-	//printGrid(lecture_db_diffs(344, "grilles/Bases_de_donnees_evaluees.csv").grid);
+	fclose(g);
+
 
 	free(coeffs);
 	free(coeffs_used);

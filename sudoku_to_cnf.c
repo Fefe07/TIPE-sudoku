@@ -48,6 +48,10 @@ void free_clause_1in9(clause_1in9 c){
     free(c.filtre);
 }
 
+void print_var(var v){
+    printf("i = %d, j = %d, k = %d\n", v.i, v.j, v.k);
+}
+
 void print_k_cnf(k_cnf f){
     printf("m = %d\n",f->m);
     printf("k = %d\n", f->k);
@@ -99,6 +103,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 filtre[k] = true;
                 var v = {.i = i, .j=j, .k=k};
                 vars[k] = v;
+                //print_var(vars[k]);
             }
             clause_1in9 c = {.nb_var = 9, .vars = vars, .filtre = filtre};
             clauses_1in9[9*i+j] = c;
@@ -116,6 +121,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 filtre[j] = true;
                 var v = {.i = i, .j=j, .k=k};
                 vars[j] = v;
+                //print_var(vars[j]);
             }
             clause_1in9 c = {.nb_var = 9, .vars = vars, .filtre = filtre};
             clauses_1in9[81 + 9*i+k] = c;
@@ -133,6 +139,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 filtre[i] = true;
                 var v = {.i = i, .j=j, .k=k};
                 vars[i] = v;
+                //print_var(vars[i]);
             }
             clause_1in9 c = {.nb_var = 9, .vars = vars, .filtre = filtre};
             clauses_1in9[162 + 9*j+k] = c;
@@ -150,6 +157,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 filtre[c] = true;
                 var v = {.i = 3*(z/3)+c/3, .j=3*(z%3)+c%3, .k=k};
                 vars[c] = v;
+                //print_var(vars[c]);
             }
             clause_1in9 cl = {.nb_var = 9, .vars = vars, .filtre = filtre};
             clauses_1in9[243 + 9*z+k] = cl;
@@ -241,6 +249,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 for(int b = 0; b<9; b++){
                     if(clauses_1in9[a].filtre[b]){
                         vars[i] = clauses_1in9[a].vars[b] ;
+                        //print_var(vars[i]);
                         positif[i] = true ;
                         i++ ;
                     }
@@ -269,6 +278,8 @@ k_cnf sudoku_to_cnf(int** grid){
             }
         }
     }
+    printf("m = %d\n",m);
+
     clause* clauses_redimensionne = malloc(m*sizeof(clause));
     assert(clauses_redimensionne!=NULL);
     for(int i = 0; i<m; i++){
@@ -276,19 +287,21 @@ k_cnf sudoku_to_cnf(int** grid){
     }
 
     /* Mettre des free ! */
-    for(int i = 0; i<m; i++){
-        free_clause(clauses[i]);
-    }
-    free(clauses);
+    // for(int i = 0; i<m; i++){
+    //     free_clause(clauses[i]);
+    // }
+    // free(clauses);
     for(int i =0; i<324; i++){
         free_clause_1in9(clauses_1in9[i]);
     }
     free(clauses_1in9);
 
-    int k = 9;
     k_cnf f = malloc(sizeof(struct k_cnf_s));
+    assert(f!=NULL);
     f->m = m;
-    f->k = k;
+    f->k = 9;
     f->clauses = clauses_redimensionne ;
+
+    //print_k_cnf(f);
     return f; 
 }
