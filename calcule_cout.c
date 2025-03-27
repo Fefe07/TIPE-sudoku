@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+
 
 
 float calcule_cout(float* coeffs, float* coeffs_used, float** results, float* difficulties, int results_size){

@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+
 
 bool ***createNotes();
 void updateNotes(int **grid, bool ***notes, int row, int col);
