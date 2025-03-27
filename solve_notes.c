@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+
 
 bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques);
 bool hiddenSingle(int **grid, bool ***notes, float* nb_techniques);
