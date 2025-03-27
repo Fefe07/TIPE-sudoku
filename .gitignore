@@ -53,6 +53,8 @@ dkms.conf
 
 grilles/
 
+vgcore.*
+
 remarques_journault.txt
 afaire.txt
 dictionnaire.txt
