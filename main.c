@@ -108,7 +108,7 @@ void print_k_cnf(k_cnf f);
 float assess_cnf(int** grid);
 
 float assess_techniques(int** grid, float* coeffs, float* coeffs_used);
-
+int assess_nb_notes(int** grid);
 
 int group(int i, int j) { return 3 * (i / 3) + j / 3; }
 // renvoie le numéro du sous-groupe (de 0 à 8)
@@ -158,7 +158,8 @@ float *cree_coeffs_used() {
 	float *coeffs_used = malloc(13 * sizeof(float));
 	assert(coeffs_used != NULL);
 	for(int i = 0; i<13; i++){
-		coeffs_used[i] = (rand() % 100 + 10) / 50. ;	
+		// coeffs_used[i] = (rand() % 100 + 10) / 50. ;	
+		coeffs_used[i] = 0;
 	}
 	//coeffs_used[2] = 0;
 	//coeffs_used[0] = 0;
@@ -271,17 +272,18 @@ int main() {
 
 	
 
-	// FILE* g = fopen("results_db_B/results_sudoku_db_B.txt", "w");
-	// for(int i = 0; i<100; i++){
-	// 	/* La résolution altère la grille donnée en argument*/
-	// 	printf("################## Grille n° %d ############\n",i);
-	// 	grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
-	// 	grid_one_diff g2 = lecture_db_B(i+2, "grilles/db_B.csv");
-	// 	float f1 = assess_techniques(g1.grid, coeffs, coeffs_used);
-	// 	float f2 = assess_cnf(g2.grid);
-	// 	fprintf(g, "%d ; %f ; %f\n",g1.difficulty, f1, f2);
-	// }
-	// fclose(g);
+	FILE* g = fopen("results_db_B/results_sudoku_db_B.txt", "w");
+	for(int i = 0; i<100; i++){
+		/* La résolution altère la grille donnée en argument*/
+		printf("################## Grille n° %d ############\n",i);
+		grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
+		grid_one_diff g2 = lecture_db_B(i+2, "grilles/db_B.csv");
+		float f1 = assess_techniques(g1.grid, coeffs, coeffs_used);
+		float f2 = assess_cnf(g2.grid);
+		int nb_notes = assess_nb_notes(g2.grid);
+		fprintf(g, "%d ; %f ; %f ; %d\n",g1.difficulty, f1, f2, nb_notes);
+	}
+	fclose(g);
 
 
 	free(coeffs);

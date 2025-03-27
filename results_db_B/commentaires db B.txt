@@ -1,0 +1,3 @@
+commentaires db_B
+
+La base de données semble inadaptée car trop dure : elle nécéssite donc du backtracking
