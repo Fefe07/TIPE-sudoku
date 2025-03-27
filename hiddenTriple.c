@@ -106,8 +106,9 @@ bool hiddenTriple_line(bool ***notes) {
                   // si verif est faux c'est que le triplet est déjà élagué, on en
                   // cherche alors un autre dans le tableau;
                   if (verif) {
-                    //printf("Technique : hiddenTriple ligne\n");
-                    //printf("%d, %d et %d forme un triplet en ligne %d \n", j + 1, k + 1, p + 1, i + 1);
+                    printf("Technique : hiddenTriple ligne\n");
+                    printf("%d, %d et %d forme un triplet en ligne %d \n",
+                           j + 1, k + 1, p + 1, i + 1);
                     return true;
                   }
                 }
@@ -187,8 +188,9 @@ bool hiddenTriple_column(bool ***notes) {
                   // si verif est faux c'est que la paire est déjà élagué, on en
                   // cherche alors une autre dans le tableau;
                   if (verif) {
-                    //printf("Technique : hiddenTriple colonne\n");
-                    //printf("%d, %d et %d forme un triplet en colonne %d \n", i + 1, k + 1, p + 1, j + 1);
+                    printf("Technique : hiddenTriple colonne\n");
+                    printf("%d, %d et %d forme un triplet en colonne %d \n",
+                           i + 1, k + 1, p + 1, j + 1);
                     return true;
                   }
                 }
@@ -283,8 +285,9 @@ bool hiddenTriple_zone(bool ***notes) {
                   // si verif est faux c'est que la paire est déjà élagué, on en
                   // cherche alors une autre dans le tableau;
                   if (verif) {
-                    //printf("Technique : hiddenTriple zone\n");
-                    //printf("%d, %d et %d forme un triplet en zone %d \n", j + 1, k + 1, p + 1, i + 1);
+                    printf("Technique : hiddenTriple zone\n");
+                    printf("%d, %d et %d forme un triplet en zone %d \n", j + 1,
+                           k + 1, p + 1, i + 1);
                     free_zones(zones);
                     return true;
                   }

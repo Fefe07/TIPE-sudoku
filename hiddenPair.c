@@ -92,8 +92,8 @@ bool hiddenPair_line(bool ***notes) {
                      // si verif est faux c'est que la paire est déjà élaguée, on en
                      // cherche alors une autre dans le tableau;
                      if (verif) {
-                        //printf("Technique : hiddenPair ligne\n");
-                        //printf("%d et %d forme une paire ligne %d \n", j + 1, k + 1, i + 1);
+                        printf("Technique : hiddenPair ligne\n");
+                        printf("%d et %d forme une paire ligne %d \n", j + 1, k + 1, i + 1);
                         
                         return true;
                      }
@@ -168,8 +168,9 @@ bool hiddenPair_column(bool ***notes) {
                      // si verif est faux c'est que la paire est déjà élagué, on en
                      // cherche alors une autre dans le tableau;
                      if (verif) {
-                        //printf("Technique : hiddenPair colonne\n");
-                        //printf("%d et %d forme une paire colonne %d \n", j + 1, k + 1, i + 1);
+                        printf("Technique : hiddenPair colonne\n");
+                        printf("%d et %d forme une paire colonne %d \n", j + 1, k + 1,
+                                  i + 1);
                         return true;
                      }
                   }
@@ -260,8 +261,8 @@ bool hiddenPair_zone(bool ***notes) {
                      // si verif est faux c'est que la paire est déjà élagué, on en
                      // cherche alors une autre dans le tableau;
                      if (verif) {
-                        //printf("Technique : hiddenPair zone\n");
-                        //printf("%d et %d forme une paire zone %d \n", j + 1, k + 1, i + 1);
+                        printf("Technique : hiddenPair zone\n");
+                        printf("%d et %d forme une paire zone %d \n", j + 1, k + 1, i + 1);
                         free_zones(zones);
                         return true;
                      }

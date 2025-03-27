@@ -38,7 +38,7 @@ void solve_simple_notes_backtrack(int** grid, float* nb_techniques){
 		//affiche_notes(notes);
 		finished = solve_notes(grid, notes, nb_techniques);
 		
-		//print_tab_float(nb_techniques, 13);
+		print_tab_float(nb_techniques, 13);
 		// si les techniques ne suffisent pas,
 		// on passe au backtracking
 		if (!finished){
