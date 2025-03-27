@@ -25,7 +25,7 @@ bool backtrack(int** grid, bool*** notes, float* nb_techniques){
 
 	
 	
-	printf("On passe au Backtracking !\n");
+	//printf("On passe au Backtracking !\n");
 	
 	// on trouve la meilleure case
 	int best_row ;
@@ -48,10 +48,10 @@ bool backtrack(int** grid, bool*** notes, float* nb_techniques){
 			}
 		}
 	}
-	printf("meilleure case : %d, %d avec %d possibilités\n", best_row, best_col, best_nb_notes);
+	//printf("meilleure case : %d, %d avec %d possibilités\n", best_row, best_col, best_nb_notes);
 	if (best_nb_notes <= 0){
 		// on a trouvé une incohérence, on retourne donc faux
-		printf("une incohérence !\n");
+		//printf("une incohérence !\n");
 		return false ;
 	}
 	
@@ -60,7 +60,7 @@ bool backtrack(int** grid, bool*** notes, float* nb_techniques){
 	for(int value = 1; value<=9; value++){
 		//pour chaque valeur valable
 		if(notes[best_row][best_col][value-1]){
-			printf("on essaye avec %d\n", value);
+			//printf("on essaye avec %d\n", value);
 			// on duplique la grille
 			int** newGrid = malloc(9*sizeof(int*));
 			assert(newGrid!=NULL);
@@ -94,7 +94,6 @@ bool backtrack(int** grid, bool*** notes, float* nb_techniques){
 			}*/
 
 			// on essaye de finir la grille
-			printf("Coucou1\n");
 			//printGrid(newGrid);
 			//affiche_notes(newNotes);
 			bool finished = solve_notes(newGrid, newNotes, /*new_*/nb_techniques);
@@ -104,9 +103,9 @@ bool backtrack(int** grid, bool*** notes, float* nb_techniques){
 
 				// si on peut finir la grille avec le guess
 				if(finished){
-					printf("On a trouve une solution !\n");
-					printGrid(newGrid);
-					fflush(stdout);
+					//printf("On a trouve une solution !\n");
+					//printGrid(newGrid);
+					//fflush(stdout);
 					for(int i=0; i<9; i++){
 						for(int j=0; j<9; j++){
 							grid[i][j] = newGrid[i][j];
@@ -149,5 +148,6 @@ bool backtrack(int** grid, bool*** notes, float* nb_techniques){
 		}
 	}
 	// si on en arrive la, c'est qu'aucune des possibilités ne marchait
+	//printf("Aucune des possibilités n'a fonctionné\n");
 	return false ;
 }

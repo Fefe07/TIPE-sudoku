@@ -59,6 +59,7 @@ grid_diffs lecture_db_diffs(int n, char* nom_de_la_base){
 		g.D_TR = d_tr ;
 		while(fgetc(f) != '\n');
 	}
+	fclose(f);
 
 	
 	return g ;

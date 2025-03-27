@@ -33,7 +33,7 @@ int** lecture(int n, char* nom_de_la_base){
 			// correctif ascii -> chiffre
 		}
 	}
-
+	fclose(f);
 	return grid ;
 	
 }

@@ -12,11 +12,11 @@ float calcule_cout(float* coeffs, float* coeffs_used, float** results, float* di
 		for(int j = 0; j<13; j++){
 			diff_i += results[i][j] * coeffs[j] ;
 			if (results[i][j] > 0.01){
-				diff_i += coeffs_used[j] - coeffs[j];
+				diff_i += coeffs_used[j];
 			}
 		}
 		cout += (diff_i-difficulties[i]) * (diff_i-difficulties[i]) ;
 	}
-	cout /= results_size ;
+	cout = cout /(1. * results_size) ;
 	return cout ;
 }

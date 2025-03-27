@@ -242,7 +242,7 @@ bool nakedTriple_zone(bool ***notes) {
                         if (m != j && m != k && m != p && zones[i][m][n]) {
                           verif = true;
                           zones[i][m][n] = false;
-                          notes[3 * (i / 3) + n / 3][3 * (i % 3) + n % 3][m] =
+                          notes[3 * (i / 3) + m / 3][3 * (i % 3) + m % 3][n] =
                               false;
                         }
                       }

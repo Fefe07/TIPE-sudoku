@@ -56,8 +56,8 @@ bool pointingPair(bool*** notes){
 				}
 				// uniquement si on a modifié quelque chose !
 				if(verif){
-					printf("Technique : pointing Pair/Triple line\n");
-					printf("Ligne = %d, zone = %d, valeur = %d\n", 3*(z/3) + line, z, value+1);
+					//printf("Technique : pointing Pair/Triple line\n");
+					//printf("Ligne = %d, zone = %d, valeur = %d\n", 3*(z/3) + line, z, value+1);
 					free_zones(zones);
 					return true;
 				}
@@ -87,8 +87,8 @@ bool pointingPair(bool*** notes){
 				}
 				// uniquement si on a modifié quelque chose !
 				if(verif){
-					printf("Technique : pointing Pair/Triple column\n");
-					printf("Colonne = %d, zone = %d, valeur = %d\n", 3*(z%3)+column, z, value+1);
+					//printf("Technique : pointing Pair/Triple column\n");
+					//printf("Colonne = %d, zone = %d, valeur = %d\n", 3*(z%3)+column, z, value+1);
 					free_zones(zones);
 					return true;
 				}
@@ -144,8 +144,8 @@ bool pointingPair_one_zone_one_value(bool*** notes, int z, int value){
 		}
 		// uniquement si on a modifié quelque chose !
 		if(verif){
-			printf("Technique : pointing Pair/Triple line\n");
-			printf("Ligne = %d, zone = %d, valeur = %d\n", 3*(z/3) + line, z, value+1);
+			//printf("Technique : pointing Pair/Triple line\n");
+			//printf("Ligne = %d, zone = %d, valeur = %d\n", 3*(z/3) + line, z, value+1);
 			free_zones(zones);
 			return true;
 		}
@@ -175,8 +175,8 @@ bool pointingPair_one_zone_one_value(bool*** notes, int z, int value){
 		}
 		// uniquement si on a modifié quelque chose !
 		if(verif){
-			printf("Technique : pointing Pair/Triple column\n");
-			printf("Colonne = %d, zone = %d, valeur = %d\n", 3*(z%3)+column, z, value+1);
+			//printf("Technique : pointing Pair/Triple column\n");
+			//printf("Colonne = %d, zone = %d, valeur = %d\n", 3*(z%3)+column, z, value+1);
 			free_zones(zones);
 			return true;
 		}

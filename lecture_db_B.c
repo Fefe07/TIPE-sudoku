@@ -1,0 +1,62 @@
+/*Fichier pour la lecture de la base de données avec difficultés */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+typedef struct {
+  int difficulty ;
+  int** grid ;
+} grid_one_diff ;
+
+// n : ligne à lire
+//le compteur sera mis à jour dans le main
+grid_one_diff lecture_db_B(int n, char* nom_de_la_base){
+	FILE* f ;
+	f = fopen(nom_de_la_base, "r");
+
+	// on va à la ligne souhaitée
+	int line = 1;
+	char c;
+	while (line < n){
+		c = fgetc(f);
+		if (c == '\n'){
+			line++;
+		}
+	}
+
+	grid_one_diff g ;
+	
+	int** mygrid = malloc(9*sizeof(int*));
+	assert(mygrid!=NULL);
+	for(int i =0; i<9; i++){
+		mygrid[i] = malloc(9*sizeof(int));
+		assert(mygrid[i]!=NULL);
+	}
+	
+    while (fgetc(f) != ','); // on saute la source
+
+    for(int i = 0; i<9; i++){
+        for(int j = 0; j<9; j++){
+            char d = fgetc(f) ;
+            if (d == '.'){
+                d = '0' ;
+            } 
+            mygrid[i][j] = d - '0';
+            // correctif ascii -> chiffre
+        }
+    }
+    fgetc(f); // on saute la virgule
+    while (fgetc(f) != ','); // on saute la solution
+    
+    fscanf(f, "%d", &g.difficulty);
+    g.grid = mygrid;
+
+    while(fgetc(f) != '\n');
+	
+	fclose(f);
+
+	
+	return g ;
+
+}

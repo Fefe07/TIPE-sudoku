@@ -41,8 +41,8 @@ bool boxLineReduction(bool*** notes){
 				}
 				// uniquement si on a modifié quelque chose !
 				if(verif){
-					printf("Technique : boxLineReduction line\n");
-					printf("ligne = %d, zone = %d, valeur = %d\n", i, zone + 3*(i/3), value+1);
+					//printf("Technique : boxLineReduction line\n");
+					//printf("ligne = %d, zone = %d, valeur = %d\n", i, zone + 3*(i/3), value+1);
 					return true;
 				}
 			}
@@ -77,8 +77,8 @@ bool boxLineReduction(bool*** notes){
 				}
 				// uniquement si on a modifié quelque chose !
 				if(verif){
-					printf("Technique : boxLineReduction column\n");
-					printf("colonne = %d, zone = %d, valeur = %d\n", j, 3*zone +j/3, value+1);
+					//printf("Technique : boxLineReduction column\n");
+					//printf("colonne = %d, zone = %d, valeur = %d\n", j, 3*zone +j/3, value+1);
 					return true;
 				}
 			}

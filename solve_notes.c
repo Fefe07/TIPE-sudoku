@@ -187,8 +187,8 @@ bool solve_notes(int **grid, bool ***notes, float* nb_techniques) {
     }
   }
   if(!finished){
-    printf("SolveNotes pas fini\n");
-    printGrid(grid);
+    //printf("SolveNotes pas fini\n");
+    //printGrid(grid);
   }
   
   return finished ;
