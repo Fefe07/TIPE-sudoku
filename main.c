@@ -109,6 +109,7 @@ float assess_cnf(int** grid);
 
 float assess_techniques(int** grid, float* coeffs, float* coeffs_used);
 int assess_nb_notes(int** grid);
+int assess_repartition(int** grid);
 
 int group(int i, int j) { return 3 * (i / 3) + j / 3; }
 // renvoie le numéro du sous-groupe (de 0 à 8)
@@ -281,7 +282,8 @@ int main() {
 		float f1 = assess_techniques(g1.grid, coeffs, coeffs_used);
 		float f2 = assess_cnf(g2.grid);
 		int nb_notes = assess_nb_notes(g2.grid);
-		fprintf(g, "%d ; %f ; %f ; %d\n",g1.difficulty, f1, f2, nb_notes);
+		int repartition = assess_repartition(g2.grid);
+		fprintf(g, "%d ; %f ; %f ; %d ; %d\n",g1.difficulty, f1, f2, nb_notes, repartition);
 	}
 	fclose(g);
 
