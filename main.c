@@ -107,7 +107,7 @@ k_cnf sudoku_to_cnf(int** grid);
 void print_k_cnf(k_cnf f);
 float assess_cnf(int** grid);
 
-float assess_techniques(int** grid, float* coeffs, float* coeffs_used);
+float assess_techniques(int** grid, float* coeffs, float* coeffs_first_use);
 int assess_nb_notes(int** grid);
 int assess_repartition(int** grid);
 
@@ -132,7 +132,9 @@ void print_tab_float(float *tab, int size) {
 	printf("\n");
 }
 
-float calcule_cout(float *coeffs, float *coeffs_used, float **results, float *difficulties, int results_size);
+float calcule_cout(float *coeffs, float *coeffs_first_use, float **results, float *difficulties, int results_size);
+
+void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, float* difficulties, int results_size);
 
 float *cree_coeffs() {
 	/* Tableau des techniques :
@@ -150,27 +152,29 @@ float *cree_coeffs() {
 	float *coeffs = malloc(13 * sizeof(float));
 	assert(coeffs != NULL);
 	for(int i = 0; i<13; i++){
-		coeffs[i] = (rand() % 100) / 50. ; 
+		coeffs[i] = (rand() % 100 + 10) / 50. ; 
 	}
 	return coeffs;
 }
 
-float *cree_coeffs_used() {
-	float *coeffs_used = malloc(13 * sizeof(float));
-	assert(coeffs_used != NULL);
+float *cree_coeffs_first_use() {
+	float *coeffs_first_use = malloc(13 * sizeof(float));
+	assert(coeffs_first_use != NULL);
 	for(int i = 0; i<13; i++){
-		// coeffs_used[i] = (rand() % 100 + 10) / 50. ;	
-		coeffs_used[i] = 0;
+		coeffs_first_use[i] = (rand() % 100 + 10) / 50. ;	
+		//coeffs_first_use[i] = 0;
 	}
-	//coeffs_used[2] = 0;
-	//coeffs_used[0] = 0;
-	return coeffs_used;
+	//coeffs_first_use[2] = 0;
+	//coeffs_first_use[0] = 0;
+	return coeffs_first_use;
 }
+
+
 
 int main() {
 	srand(time(NULL));
 	float *coeffs = cree_coeffs();
-	float *coeffs_used = cree_coeffs_used();
+	float *coeffs_first_use = cree_coeffs_first_use();
 
 	int results_size = 200;
 	FILE *f = fopen("resultats.txt", "w");
@@ -196,11 +200,11 @@ int main() {
 	for (int nbGrille = 0; nbGrille < results_size ; nbGrille++) {
 
 		printf("Grille n %d\n", nbGrille);
-		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
+		grid_diffs g = lecture_db_diffs(nbGrille+2, "grilles/Bases_de_donnees_evaluees.csv");
 		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
 		//printGrid(g.grid);
-		difficulties[nbGrille] = (float) g.difficulty;
+		difficulties[nbGrille] = (float) g.D_TR;
 
 		float *nb_tech = malloc(13 * sizeof(float));
 		for (int i = 0; i < 13; i++) {
@@ -214,82 +218,36 @@ int main() {
 		for (int i = 0; i < 13; i++) {
 			fprintf(f, "%.4f ; ", nb_tech[i]);
 		}
-		fprintf(f, "%d ;\n", g.difficulty);
+		fprintf(f, "%f ;\n", g.D_TR);
 		free_grid(g.grid);
 	}
 	fclose(f);
 	printf("Coucou\n");
 
+	calcule_coeffs(coeffs,coeffs_first_use,results,difficulties, results_size);
 	/* Calcul des coefficients par descente de gradient au formalisme douteux */
-	float cout = calcule_cout(coeffs, coeffs_used, results, difficulties, results_size);
-	float ancien_cout = cout + 42;
-	int i = 0;
-	while (ancien_cout > cout) {
-		ancien_cout = cout ;
-		for (int j = 0; j <13; j++) {
-			//for (int k = 0; k < 100; k++) {
-				coeffs[j] *= 0.99;
-				float nouveau_cout = calcule_cout(coeffs, coeffs_used, results, difficulties, results_size);
-				if (nouveau_cout >= cout) {
-					coeffs[j] /= 0.99;
-				} else {
-					cout = nouveau_cout;
-				}
-				coeffs[j] *= 1.01;
-				nouveau_cout = calcule_cout(coeffs, coeffs_used, results, difficulties, results_size);
-				if (nouveau_cout >= cout) {
-					coeffs[j] /= 1.01;
-				} else {
-					cout = nouveau_cout;
-				}
-				coeffs_used[j] *= 0.99;
-				nouveau_cout = calcule_cout(coeffs, coeffs_used, results, difficulties, results_size);
-				if (nouveau_cout >= cout) {
-					coeffs_used[j] /= 0.99;
-				} else {
-					cout = nouveau_cout;
-				}
-				coeffs_used[j] *= 1.01;
-				nouveau_cout = calcule_cout(coeffs, coeffs_used, results, difficulties, results_size);
-				if (nouveau_cout >= cout) {
-					coeffs_used[j] /= 1.01;
-				} else {
-					cout = nouveau_cout;
-				}
-			//}
-		}
-		if(i%100 == 0){
-			printf("i = %d : \n", i);
-			print_tab_float(coeffs, 13);
-			print_tab_float(coeffs_used, 13);
-			printf("Cout = %f\n", cout);
-			float ec	= sqrt(cout);
-			printf("ecart-type = %f\n", ec);
-			fflush(stdout);
-		}
-		i++;
-	}
+	
 	printf("Coucou\n");
 
 	
 
-	FILE* g = fopen("results_db_B/results_sudoku_db_B.txt", "w");
+	FILE* g = fopen("results_db_0/results_0_5_05.txt", "w");
 	for(int i = 0; i<100; i++){
 		/* La résolution altère la grille donnée en argument*/
-		printf("################## Grille n° %d ############\n",i);
-		grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
-		grid_one_diff g2 = lecture_db_B(i+2, "grilles/db_B.csv");
-		float f1 = assess_techniques(g1.grid, coeffs, coeffs_used);
+		//printf("################## Grille n° %d ############\n",i);
+		grid_diffs g1 = lecture_db_diffs(i+2, "grilles/Bases_de_donnees_evaluees.csv");
+		grid_diffs g2 = lecture_db_diffs(i+2, "grilles/Bases_de_donnees_evaluees.csv");
+		float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
 		float f2 = assess_cnf(g2.grid);
 		int nb_notes = assess_nb_notes(g2.grid);
 		int repartition = assess_repartition(g2.grid);
-		fprintf(g, "%d ; %f ; %f ; %d ; %d\n",g1.difficulty, f1, f2, nb_notes, repartition);
+		fprintf(g, "%f ; %f ; %f ; %d ; %d\n",g1.D_TR, f1, f2, nb_notes, repartition);
 	}
 	fclose(g);
 
 
 	free(coeffs);
-	free(coeffs_used);
+	free(coeffs_first_use);
 	for(int i = 0; i<results_size; i++){
 		free(results[i]);
 	}

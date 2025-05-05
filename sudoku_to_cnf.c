@@ -278,7 +278,7 @@ k_cnf sudoku_to_cnf(int** grid){
             }
         }
     }
-    printf("m = %d\n",m);
+    //printf("m = %d\n",m);
 
     clause* clauses_redimensionne = malloc(m*sizeof(clause));
     assert(clauses_redimensionne!=NULL);

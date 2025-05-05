@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/felix/Données/FELIX/1-MP2I/TIPE/Backups replit/TIPESudokupath_1_12_24_seg_fault",
-      "program": "/home/felix/Données/FELIX/1-MP2I/TIPE/Backups replit/TIPESudokupath_1_12_24_seg_fault/build/Debug/outDebug",
+      "cwd": "/home/felix/Données/FELIX/1-MP2I/TIPE/0-sudoku_evaluator",
+      "program": "/home/felix/Données/FELIX/1-MP2I/TIPE/0-sudoku_evaluator/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
