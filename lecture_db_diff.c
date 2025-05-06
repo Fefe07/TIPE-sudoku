@@ -25,7 +25,7 @@ grid_diffs lecture_db_diffs(int n, char* nom_de_la_base){
 			line++;
 		}
 	}
-	float d_tr = 42 ; 
+	float d_tr = 42. ; 
 	float d_to ;
 	grid_diffs g ;
 	
@@ -35,7 +35,7 @@ grid_diffs lecture_db_diffs(int n, char* nom_de_la_base){
 		mygrid[i] = malloc(9*sizeof(int));
 		assert(mygrid[i]!=NULL);
 	}
-	while(d_tr >5){
+	while(d_tr >41.){
 		while (fgetc(f) != ',');
 
 		for(int i = 0; i<9; i++){

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
+
 
 int group(int i, int j);												// ok
 bool same_zone(int i1, int j1, int i2, int j2); // ok
@@ -138,16 +138,19 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
 
 float *cree_coeffs() {
 	/* Tableau des techniques :
-	0 - nakedSingle
-	1 - hiddenSingle
-	2 - nakedPair
-	3 - nakedTriple
-	4 - hiddenPair
-	5 - hiddenTriple
-	6 - pointing Pair / Triple
-	7 - Box line reduction
-	8 - X-Wing
-	9 - Backtracking
+	0 - last Free Cell
+	1 - nakedSingle
+	2 - hiddenSingle
+	3 - nakedPair
+	4 - nakedTriple
+	5 - hiddenPair
+	6 - hiddenTriple
+	7 - pointing Pair / Triple
+	8 - Box line reduction
+	9 - X-Wing
+	10 - Y-wing
+	11 - Swordfish
+	12 - Backtracking
 	*/
 	float *coeffs = malloc(13 * sizeof(float));
 	assert(coeffs != NULL);
@@ -176,7 +179,7 @@ int main() {
 	float *coeffs = cree_coeffs();
 	float *coeffs_first_use = cree_coeffs_first_use();
 
-	int results_size = 200;
+	int results_size = 344;
 	FILE *f = fopen("resultats.txt", "w");
 
 	/*
@@ -216,18 +219,26 @@ int main() {
 		// print_tab_int(nb_tech, 10);
 		results[nbGrille] = nb_tech;
 		for (int i = 0; i < 13; i++) {
-			fprintf(f, "%.4f ; ", nb_tech[i]);
+			fprintf(f, "%.4f, ", nb_tech[i]);
 		}
+		
 		fprintf(f, "%f ;\n", g.D_TR);
+		
 		free_grid(g.grid);
 	}
-	fclose(f);
-	printf("Coucou\n");
+	
 
 	calcule_coeffs(coeffs,coeffs_first_use,results,difficulties, results_size);
 	/* Calcul des coefficients par descente de gradient au formalisme douteux */
-	
-	printf("Coucou\n");
+	for (int i = 0; i < 13; i++) {
+		fprintf(f, "%.4f, ", coeffs[i]);
+	}
+	fprintf(f,"42;\n");
+	for (int i = 0; i < 13; i++) {
+		fprintf(f, "%.4f, ", coeffs_first_use[i]);
+	}
+	fprintf(f,"42\n");
+	fclose(f);
 
 	
 

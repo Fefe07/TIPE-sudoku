@@ -42,7 +42,7 @@ void solve_simple_notes_backtrack(int** grid, float* nb_techniques){
 		// si les techniques ne suffisent pas,
 		// on passe au backtracking
 		if (!finished){
-			printGrid(grid);
+			//printGrid(grid);
 			finished = backtrack(grid, notes, nb_techniques);
 			if (!finished){
 				printGrid(grid);

@@ -39,12 +39,10 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
         float nouveau_cout = calcule_cout(nouveaux_coeffs, nouveaux_coeffs_first_use, results, difficulties, results_size);
         if(nouveau_cout<cout || (((rand() % 1000000)/1000000.) < expf((cout-nouveau_cout)/T))){
             cout = nouveau_cout ;
-            float* temp = coeffs ;
-            coeffs = nouveaux_coeffs ;
-            free(temp);
-            temp = coeffs_first_use ;
-            coeffs_first_use = nouveaux_coeffs_first_use ;
-            free(temp);
+            for(int i = 0; i<13; i++){
+                coeffs[i] = nouveaux_coeffs[i];
+                coeffs_first_use[i] = nouveaux_coeffs_first_use[i];
+            }
             if(best_cout>cout){
                 for(int i = 0; i<13; i++){
                     best_coeffs[i] = coeffs[i] ;
@@ -60,7 +58,7 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
         }
         T = T*0.9999 ;
 
-		if(i%10 == 0){
+		if(i%10000 == 0){
 			printf("i = %d : \n", i);
 			print_tab_float(coeffs, 13);
 			print_tab_float(coeffs_first_use, 13);
@@ -78,6 +76,12 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
     float ec = sqrt(best_cout);
     printf("ecart-type = %f\n", ec);
     printf("T = %f\n", T);
+
+    for(int i = 0; i<13; i++){
+        coeffs[i] = best_coeffs[i] ;
+        coeffs_first_use[i] = best_coeffs_first_use[i] ;
+    }
+    
 
 }
 
