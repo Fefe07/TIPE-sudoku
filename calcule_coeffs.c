@@ -20,8 +20,9 @@ float* copy(float* tab, int size){
 void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, float* difficulties, int results_size){
     /* Calcule les valeurs des tableaux coeffs et coeffs_first_use minimisant l'écart au difficultés, */
     /* selon les moindres carrés */
-    /* Ce calcul se fera à l'aide d'une recherche linéaire */
-    //srand(time(NULL));
+    /* Ce calcul se fera à l'aide d'un recuit simulé */
+    /* https://en.wikipedia.org/wiki/Simulated_annealing */
+
     float cout = calcule_cout(coeffs, coeffs_first_use, results, difficulties, results_size);
     float* best_coeffs = copy(coeffs, 13);
     float* best_coeffs_first_use = copy(coeffs_first_use, 13);

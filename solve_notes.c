@@ -161,6 +161,7 @@ bool solve_notes(int **grid, bool ***notes, float* nb_techniques) {
           nb_techniques[1]++;
         }
       } else {
+        /* Le décalage d'indices vient d'une revue de l'aordre de difficulté des techniques */
         nb_techniques[2]+= nb_pos/9.;
       }
     }
