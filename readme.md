@@ -30,6 +30,6 @@ J'implémente deux méthodes :
 
 ## Calcul des critères visuels
 
-L'idée est d'obtenir des critères similaires au nombre d'indices pour évlauer la difficulté, mais plus fiables.
+L'idée est d'obtenir des critères similaires au nombre d'indices pour évaluer la difficulté, mais plus fiables.
 
 Je n'ai pas encore de résultats structurés.
