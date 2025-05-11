@@ -4,9 +4,9 @@ Il exploite séparément deux approches :
 - d'une part, il évalue les techniques de résolution qu'un humain devra utiliser
 - d'autre part, il calcule plusieurs critères d'évaluation pré-résolution : cette partie sert à évaluer ces critères plus que le sudoku lui-même
 
-Ce projet a été réalisé dans le cadre des TIPE (travaux d'initiative personnelle encadrés), une initiation à la démarche de chercheur ou d'ingénieur en classes préparatoires aux grandes écoles
+Ce projet a été réalisé dans le cadre des TIPE (travaux d'initiative personnelle encadrés), une initiation à la démarche de chercheur ou d'ingénieur en classes préparatoires aux grandes écoles.
 
-Une présentation associée à ce projet sera disponible fin mai 2025
+Une présentation associée à ce projet sera disponible fin mai 2025.
 
 
 ## Calcul des techniques humaines nécéssaires
@@ -17,15 +17,15 @@ Le solveur applique successivement les techniques humaines dans l'ordre de diffi
 
 ## Obtention d'une difficulté
 
-Pour obtenir une échelle de difficulté à partir de ces techniques, il faut calculer un score, souvent en coefficientant l'usage de chque technique.
+Pour obtenir une échelle de difficulté à partir de ces techniques, il faut calculer un score, souvent en coefficientant l'usage de chque technique.  
 J'ai fait le choix de :  
 difficulté = somme sur les techniques ( nombre d'utilisations*coeff de la techniques + coeff de première utilisation si on utilise la technique )  
 Le coefficient de première utilisation est facultatif.
 
 Pour obtenir ces coefficients, je m'appuie sur des bases de données (appelées bases_de_données_évaluées.csv et db_B.csv, lues et filtrées par lecture\_db\_diffs/B).  
 J'implémente deux méthodes : 
-- Une méthode analytique (dans moindres_carrés.py)
-- Une méthode approchée par recuit simulé (dans calcule_coeffs.c)
+- Une méthode analytique (dans moindres_carrés.py),
+- Une méthode approchée par recuit simulé (dans calcule_coeffs.c).
 
 
 ## Calcul des critères visuels
