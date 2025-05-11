@@ -19,10 +19,21 @@ grid_one_diff lecture_db_B(int n, char* nom_de_la_base){
 	int line = 1;
 	char c;
 	while (line < n){
-		c = fgetc(f);
-		if (c == '\n'){
+		while (fgetc(f) != ','); // on saute la source
+
+		for(int i = 0; i<9; i++){
+			for(int j = 0; j<9; j++){
+				fgetc(f) ;
+			}
+		}
+		fgetc(f); // on saute la virgule
+		while (fgetc(f) != ','); // on saute la solution
+		int diff;
+		fscanf(f, "%d", &diff);
+		if(diff<10){
 			line++;
 		}
+		while(fgetc(f) != '\n');
 	}
 
 	grid_one_diff g ;
@@ -33,28 +44,30 @@ grid_one_diff lecture_db_B(int n, char* nom_de_la_base){
 		mygrid[i] = malloc(9*sizeof(int));
 		assert(mygrid[i]!=NULL);
 	}
-	
-    while (fgetc(f) != ','); // on saute la source
+	g.difficulty = 42069 ;
+	while(g.difficulty>=10){
+		while (fgetc(f) != ','); // on saute la source
 
-    for(int i = 0; i<9; i++){
-        for(int j = 0; j<9; j++){
-            char d = fgetc(f) ;
-            if (d == '.'){
-                d = '0' ;
-            } 
-            mygrid[i][j] = d - '0';
-            // correctif ascii -> chiffre
-        }
-    }
-    fgetc(f); // on saute la virgule
-    while (fgetc(f) != ','); // on saute la solution
-    
-    fscanf(f, "%d", &g.difficulty);
-    g.grid = mygrid;
+		for(int i = 0; i<9; i++){
+			for(int j = 0; j<9; j++){
+				char d = fgetc(f) ;
+				if (d == '.'){
+					d = '0' ;
+				} 
+				mygrid[i][j] = d - '0';
+				// correctif ascii -> chiffre
+			}
+		}
+		fgetc(f); // on saute la virgule
+		while (fgetc(f) != ','); // on saute la solution
+		
+		fscanf(f, "%d", &g.difficulty);
+		g.grid = mygrid;
 
-    while(fgetc(f) != '\n');
-	
+		while(fgetc(f) != '\n');
+	}
 	fclose(f);
+	
 
 	
 	return g ;

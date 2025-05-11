@@ -1,8 +1,10 @@
 #include <assert.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 
 
 int group(int i, int j);												// ok
@@ -179,7 +181,7 @@ int main() {
 	float *coeffs = cree_coeffs();
 	float *coeffs_first_use = cree_coeffs_first_use();
 
-	int results_size = 344;
+	int results_size = 1000;
 	FILE *f = fopen("resultats.txt", "w");
 
 	/*
@@ -201,13 +203,14 @@ int main() {
 	assert(difficulties != NULL);
 
 	for (int nbGrille = 0; nbGrille < results_size ; nbGrille++) {
-
-		printf("Grille n %d\n", nbGrille);
-		grid_diffs g = lecture_db_diffs(nbGrille+2, "grilles/Bases_de_donnees_evaluees.csv");
+		if(nbGrille%100 == 0){
+			printf("Grille n %d\n", nbGrille);
+		}
+		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
 		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
 		//printGrid(g.grid);
-		difficulties[nbGrille] = (float) g.D_TR;
+		difficulties[nbGrille] = (float) g.difficulty;
 
 		float *nb_tech = malloc(13 * sizeof(float));
 		for (int i = 0; i < 13; i++) {
@@ -215,14 +218,16 @@ int main() {
 		}
 		//printGrid(g.grid);
 		solve_simple_notes_backtrack(g.grid, nb_tech);
-		print_tab_float(nb_tech, 13);
+		if(nbGrille%100 == 0){
+			print_tab_float(nb_tech, 13);
+		}
 		// print_tab_int(nb_tech, 10);
 		results[nbGrille] = nb_tech;
 		for (int i = 0; i < 13; i++) {
 			fprintf(f, "%.4f, ", nb_tech[i]);
 		}
 		
-		fprintf(f, "%f ;\n", g.D_TR);
+		fprintf(f, "%d ;\n", g.difficulty);
 		
 		free_grid(g.grid);
 	}
@@ -246,13 +251,13 @@ int main() {
 	for(int i = 0; i<100; i++){
 		/* La résolution altère la grille donnée en argument*/
 		//printf("################## Grille n° %d ############\n",i);
-		grid_diffs g1 = lecture_db_diffs(i+2, "grilles/Bases_de_donnees_evaluees.csv");
-		grid_diffs g2 = lecture_db_diffs(i+2, "grilles/Bases_de_donnees_evaluees.csv");
+		grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
+		grid_one_diff g2 = lecture_db_B(i+2, "grilles/db_B.csv");
 		float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
 		float f2 = assess_cnf(g2.grid);
 		int nb_notes = assess_nb_notes(g2.grid);
 		int repartition = assess_repartition(g2.grid);
-		fprintf(g, "%f ; %f ; %f ; %d ; %d\n",g1.D_TR, f1, f2, nb_notes, repartition);
+		fprintf(g, "%d ; %f ; %f ; %d ; %d\n",g1.difficulty, f1, f2, nb_notes, repartition);
 	}
 	fclose(g);
 
