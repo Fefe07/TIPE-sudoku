@@ -1,11 +1,8 @@
 /*fonction y-wing*/
 #include <assert.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-int group(int i, int j) ;
-// renvoie le numéro du sous-groupe (de 0 à 8)
+
 
 bool same_zone(int i1, int j1, int i2, int j2) ;
 // même ligne ou même colonne ou même sous-groupe

@@ -32,8 +32,6 @@ bool lastPossibleNumber(int** grid){
                     grid[row][col]=sum; // sum vaut alors la seule valeur restante
                     //printf("Technique : last Possible Number\n");
                     //printf("row = %d, col = %d, val = %d\n", row, col, sum); //tests
-                    // assert(check(grid, row, col)); // au cas où la grille serait mauvaise (je ne sais pas si c'est nécéssaire)
-                    // retiré pour gagner du temps !
                     return true ;
                 }
             }

@@ -7,9 +7,13 @@
 
 
 
-int group(int i, int j);												// ok
-bool same_zone(int i1, int j1, int i2, int j2); // ok
-bool check(int **grid, int i, int j);					 // ok
+int group(int i, int j) { return 3 * (i / 3) + j / 3; } // ok
+// renvoie le numéro du sous-groupe (de 0 à 8)
+
+bool same_zone(int i1, int j1, int i2, int j2) { // ok
+	// i1, i2, j1, j2 entre 0 et 8
+	return (i1 == i2) || (j1 == j2) || (group(i1, j1) == group(i2, j2));
+} // même ligne ou même colonne ou même sous-groupe
 
 void printGrid(int **grid); // ok
 
@@ -114,13 +118,7 @@ int assess_nb_notes(int** grid);
 int assess_repartition(int** grid);
 int assess_nb_clues(int** grid);
 
-int group(int i, int j) { return 3 * (i / 3) + j / 3; }
-// renvoie le numéro du sous-groupe (de 0 à 8)
 
-bool same_zone(int i1, int j1, int i2, int j2) {
-	// i1, i2, j1, j2 entre 0 et 8
-	return (i1 == i2) || (j1 == j2) || (group(i1, j1) == group(i2, j2));
-} // même ligne ou même colonne ou même sous-groupe
 
 void print_tab_int(int *tab, int size) {
 	for (int i = 0; i < size; i++) {
