@@ -81,11 +81,11 @@ identite = range(n)
 ### Tri
 t = []
 for i in range(n):
-    t.append((d[i],y2[i]))
+    t.append((y2[i],d[i]))
 t.sort()
 for i in range(n):
-    d[i] = t[i][0]
-    y2[i] = t[i][1]
+    d[i] = t[i][1]
+    y2[i] = t[i][0]
 
 
 
@@ -157,17 +157,7 @@ cout /= n
 print("variance = ",cout)
 
 
-######## Calcule la corrélation #######
 
-dcmoy = np.average(d)
-ddmoy = np.average(y2)
-corr = 0
-for i in range(n) :
-    corr += (d[i] - dcmoy)*(y2[i]-ddmoy) 
-
-corr/= (np.std(y2) * np.std(d) * n)
-
-print("correlation = ",corr)
 
 
 
@@ -179,17 +169,29 @@ identite = range(n)
 
 t = []
 for i in range(n):
-    t.append((d[i],y2[i]))
+    t.append((y2[i],d[i]))
 t.sort()
 for i in range(n):
-    d[i] = t[i][0]
-    y2[i] = t[i][1]
+    d[i] = t[i][1]
+    y2[i] = t[i][0]
 
 plt.scatter(identite,d, label = "Difficulté calculée")
 plt.scatter(identite,y2, label = "Difficulté donnée")
 plt.xlabel("Sudokus")
 plt.ylabel("Difficulté(réel arbitraire)")
 plt.title("Méthode analytique avec coeffs de première utilisation")
+plt.legend()
 plt.show()
 
 
+######## Calcule la corrélation #######
+
+dcmoy = np.average(d)
+ddmoy = np.average(y2)
+corr = 0
+for i in range(n) :
+    corr += (d[i] - dcmoy)*(y2[i]-ddmoy) 
+
+corr/= (np.std(y2) * np.std(d) * n)
+
+print("correlation = ",corr)

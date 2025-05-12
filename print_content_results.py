@@ -54,17 +54,17 @@ identite = range(n-2)
 #trie les tableaux
 t = []
 for i in range(n-2):
-    t.append((diff_calculee[i],diff_donnee[i]))
+    t.append((diff_donnee[i],diff_calculee[i]))
 t.sort()
 for i in range(n-2):
-    diff_calculee[i] = t[i][0]
-    diff_donnee[i] = t[i][1]
+    diff_calculee[i] = t[i][1]
+    diff_donnee[i] = t[i][0]
 
 
 
 #plt.semilogy()
 plt.scatter(identite,diff_calculee,s=40, label="Difficulté calculée")
-plt.scatter(identite,diff_donnee,s=40, label="Difficulté donnée")
+plt.scatter(identite,diff_donnee,s=40, label="ln(Difficulté donnée+1)")
 plt.xlabel("Sudokus")
 plt.ylabel("Difficulté(réel arbitraire)")
 plt.title("Recuit simulé avec coeffs de première utilisation")

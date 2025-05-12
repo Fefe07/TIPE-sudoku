@@ -22,14 +22,14 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
     /* selon les moindres carrés */
     /* Ce calcul se fera à l'aide d'un recuit simulé */
     /* https://en.wikipedia.org/wiki/Simulated_annealing */
-
+    //srand(time(NULL));
     float cout = calcule_cout(coeffs, coeffs_first_use, results, difficulties, results_size);
     float* best_coeffs = copy(coeffs, 13);
     float* best_coeffs_first_use = copy(coeffs_first_use, 13);
     float best_cout = cout ;
 	int i = 0;
     float T = 10. ;
-	while (T > 0.00000001) {
+	while (T > 0.000001) {
 		float* nouveaux_coeffs = copy(coeffs, 13);
         float* nouveaux_coeffs_first_use = copy(coeffs_first_use,13);
 

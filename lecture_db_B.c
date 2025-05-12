@@ -15,6 +15,8 @@ grid_one_diff lecture_db_B(int n, char* nom_de_la_base){
 	FILE* f ;
 	f = fopen(nom_de_la_base, "r");
 
+	int cap = 10 ;
+
 	// on va à la ligne souhaitée
 	int line = 1;
 	char c;
@@ -30,7 +32,7 @@ grid_one_diff lecture_db_B(int n, char* nom_de_la_base){
 		while (fgetc(f) != ','); // on saute la solution
 		int diff;
 		fscanf(f, "%d", &diff);
-		if(diff<10){
+		if(diff<cap	){
 			line++;
 		}
 		while(fgetc(f) != '\n');
@@ -45,7 +47,7 @@ grid_one_diff lecture_db_B(int n, char* nom_de_la_base){
 		assert(mygrid[i]!=NULL);
 	}
 	g.difficulty = 42069 ;
-	while(g.difficulty>=10){
+	while(g.difficulty>=cap){
 		while (fgetc(f) != ','); // on saute la source
 
 		for(int i = 0; i<9; i++){
