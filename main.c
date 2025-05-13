@@ -222,7 +222,7 @@ int main() {
 		// print_tab_int(nb_tech, 10);
 		results[nbGrille] = nb_tech;
 		for (int i = 0; i < 13; i++) {
-			fprintf(f, "%.4f, ", nb_tech[i]);
+			fprintf(f, "%f, ", nb_tech[i]);
 		}
 		
 		fprintf(f, "%f ;\n", difficulties[nbGrille]);
@@ -235,11 +235,11 @@ int main() {
 	
 	/* Calcul des coefficients par descente de gradient au formalisme douteux */
 	for (int i = 0; i < 13; i++) {
-		fprintf(f, "%.4f, ", coeffs[i]);
+		fprintf(f, "%f, ", coeffs[i]);
 	}
 	fprintf(f,"42;\n");
 	for (int i = 0; i < 13; i++) {
-		fprintf(f, "%.4f, ", coeffs_first_use[i]);
+		fprintf(f, "%f, ", coeffs_first_use[i]);
 	}
 	fprintf(f,"42\n");
 	fclose(f);

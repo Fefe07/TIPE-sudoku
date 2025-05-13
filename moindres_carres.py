@@ -115,7 +115,9 @@ for i in range(n) :
 m2 = np.matrix(m2)
 
 
-
+## Cette procéudre fait le même travail que les lignes suivantes, je l'ai découverte après
+m2t =np.linalg.matrix_transpose(m2)
+print("x2 = ",np.linalg.lstsq(m2t*m2,m2t*y))
 
 # Supprime les colonnes liés, de telle sorte que m soit de rang maximal
 j = 0
