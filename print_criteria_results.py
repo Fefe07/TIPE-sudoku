@@ -9,7 +9,7 @@ Created on Mon May  5 18:13:53 2025
 import matplotlib.pyplot as plt
 import numpy as np
 
-f = open("results_db_B/results_criteria.txt","r")
+f = open("results_db_C/results_criteria.txt","r")
 
 l = f.read()
 m = np.matrix(l)
@@ -24,7 +24,7 @@ diff_donnee = n*[42]
 diff_calculee = n * [42]
 nombre_indices = n * [42]
 for i in range(n):
-    diff_donnee[i] = m[i,0]
+    diff_donnee[i] = m[i,0]/30
     diff_calculee[i] = m[i,1]
     nombre_indices[i] = m[i,3]
 
@@ -55,8 +55,8 @@ identite = range(n)
 
 #plt.semilogy()
 #plt.scatter(identite,diff_calculee, label="Difficulté calculée")
-plt.scatter(identite,diff_donnee,s=40, label="Difficulté donnée")
-plt.scatter(identite,nombre_indices,s=40, label="nombre d'indices")
+plt.scatter(identite,diff_donnee,s=20, label="Difficulté donnée")
+plt.scatter(identite,nombre_indices,s=20, label="nombre d'indices")
 plt.xlabel("Sudokus")
 plt.ylabel("Difficulté(entier arbitraire) / nombre d'indices")
 #plt.title("Recuit simulé avec coeffs de première utilisation")

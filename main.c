@@ -61,6 +61,7 @@ typedef struct {
 	int **grid;
 } grid_one_diff;
 grid_one_diff lecture_db_B(int n, char *nom_de_la_base);
+grid_one_diff lecture_db_C(int n, char *nom_de_la_base);
 
 typedef struct {
 	int technique;
@@ -180,7 +181,7 @@ int main() {
 	float *coeffs = cree_coeffs();
 	float *coeffs_first_use = cree_coeffs_first_use();
 
-	int results_size = 2000;
+	int results_size = 1500;
 	FILE *f = fopen("resultats.txt", "w");
 
 	/*
@@ -205,11 +206,11 @@ int main() {
 		if(nbGrille%100 == 0){
 			printf("Grille n %d\n", nbGrille);
 		}
-		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
+		grid_one_diff g = lecture_db_C(nbGrille+2, "grilles/db_C.csv");
 		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
 		//printGrid(g.grid);
-		difficulties[nbGrille] = (float) log(g.difficulty+1);
+		difficulties[nbGrille] = (float) g.difficulty;
 		float *nb_tech = malloc(13 * sizeof(float));
 		for (int i = 0; i < 13; i++) {
 			nb_tech[i] = 0.;
@@ -246,11 +247,11 @@ int main() {
 
 	
 
-	FILE* g = fopen("results_db_B/results_criteria.txt", "w");
-	for(int i = 0; i<200; i++){
+	FILE* g = fopen("results_db_C/results_criteria.txt", "w");
+	for(int i = 0; i<1500; i++){
 		/* La résolution altère la grille donnée en argument*/
 		//printf("################## Grille n° %d ############\n",i);
-		grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
+		grid_one_diff g1 = lecture_db_C(i+2, "grilles/db_C.csv");
 		int nb_clues = assess_nb_clues(g1.grid);
 
 		float f2 = assess_cnf(g1.grid);
@@ -258,7 +259,7 @@ int main() {
 		int repartition = assess_repartition(g1.grid);
 		float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
 		fprintf(g, "%d , %f , %f , %d, %d , %d ",g1.difficulty, f1, f2,nb_clues, nb_notes, repartition);
-		if(i<199){
+		if(i<1499){
 			fprintf(g,";\n");
 		}
 	}
