@@ -2,13 +2,13 @@ all: main
 	./main
 	
 CC = gcc
-CFLAGS = -lm -g
+CFLAGS = -lm -g -pg
 
 SRCS = $(wildcard *.c)
 HEADERS = $(wildcard *.h)
 
 main: $(SRCS) 
-	$(CC) $(CFLAGS) $(SRCS) -o "$@"
+	$(CC) $(CFLAGS) $(SRCS) -o "$@" -g
 main-debug: $(SRCS) 
 	$(CC) $(CFLAGS) -O0 $(SRCS) -o "$@"
 

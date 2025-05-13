@@ -9,7 +9,7 @@ Created on Mon May  5 18:13:53 2025
 import matplotlib.pyplot as plt
 import numpy as np
 
-f = open("results_db_C/results_criteria.txt","r")
+f = open("results_db_B/results_criteria.txt","r")
 
 l = f.read()
 m = np.matrix(l)
@@ -20,32 +20,40 @@ f.close()
 dimensions= m.shape
 n,p = dimensions
 
-diff_donnee = n*[42]
-diff_calculee = n * [42]
-nombre_indices = n * [42]
-for i in range(n):
-    diff_donnee[i] = m[i,0]/30
-    diff_calculee[i] = m[i,1]
-    nombre_indices[i] = m[i,3]
 
 
 
+n = n - 1300
 
 #trie les tableaux
 t = []
 for i in range(n):
-    t.append((diff_donnee[i],diff_calculee[i], nombre_indices[i]))
+    t.append((m[i,0],m[i,1],m[i,2],m[i,3],m[i,4],m[i,5]))
 t.sort()
+
+# t = t[:n-200] 
+# n = n-200
+
+
+
+diff_donnee = n*[42]
+diff_calculee = n * [42]
+density = n*[42]
+nombre_indices = n * [42]
+nb_notes = n*[42]
+repartition = n*[42]
+mix = n * [42]
+
 for i in range(n):
     diff_donnee[i] = t[i][0]
     diff_calculee[i] = t[i][1]
+    density[i] = t[i][2]
+    nombre_indices[i] = t[i][3] 
+    nb_notes[i] = t[i][4] 
+    repartition[i] = t[i][5] 
+    mix[i] = repartition[i]+nombre_indices[i]
 
-    nombre_indices[i] = t[i][2]
 
-diff_calculee = diff_calculee[16:]
-diff_donnee = diff_donnee[16:]
-nombre_indices = nombre_indices[16:]
-n = n-16
 
 
 
@@ -55,8 +63,12 @@ identite = range(n)
 
 #plt.semilogy()
 #plt.scatter(identite,diff_calculee, label="Difficulté calculée")
-plt.scatter(identite,diff_donnee,s=20, label="Difficulté donnée")
-plt.scatter(identite,nombre_indices,s=20, label="nombre d'indices")
+plt.scatter(identite, diff_donnee, s=40, label="Difficulté donnée")
+#plt.scatter(identite, density,s=40, label="Densité")
+plt.scatter(identite, nombre_indices, s=40, label="Nombre d'indices")
+#plt.scatter(identite, nb_notes, s=40, label="Nombre de notes")
+plt.scatter(identite, repartition, s=40, label="Répartition")
+plt.scatter(identite, mix, label ="Mix")
 plt.xlabel("Sudokus")
 plt.ylabel("Difficulté(entier arbitraire) / nombre d'indices")
 #plt.title("Recuit simulé avec coeffs de première utilisation")
@@ -69,19 +81,43 @@ plt.show()
 
 ddmoy = np.average(diff_donnee)
 dcmoy = np.average(diff_calculee)
+densitymoy = np.average(density)
 nimoy = np.average(nombre_indices)
+nbnotesmoy = np.average(nb_notes)
+rmoy = np.average(repartition)
+mmoy = np.average(mix)
 corr_01 = 0
 corr_02 = 0
 corr_12 = 0
+corr_03 = 0
+corr_04 = 0
+corr_05 = 0
+corr_35 = 0
+corr_06 = 0
 for i in range(n) :
     corr_01 += (diff_calculee[i] - dcmoy)*(diff_donnee[i]-ddmoy) 
-    corr_02 += (diff_donnee[i] - ddmoy)*(nombre_indices[i]-nimoy) 
+    corr_02 += (density[i] - densitymoy)*(diff_donnee[i]-ddmoy) 
+    corr_03 += (diff_donnee[i] - ddmoy)*(nombre_indices[i]-nimoy) 
+    corr_04 += (nb_notes[i] - nbnotesmoy)*(diff_donnee[i]-ddmoy) 
     corr_12 += (nombre_indices[i] - nimoy)*(diff_calculee[i]-dcmoy) 
+    corr_05 += (repartition[i] - rmoy)*(diff_donnee[i]-ddmoy)
+    corr_35 += (nombre_indices[i]-nimoy)*(repartition[i]-rmoy)
+    corr_06 += (diff_donnee[i]-ddmoy)*(mix[i]-mmoy)
 
 corr_01/= (np.std(diff_donnee) * np.std(diff_calculee) * n)
-corr_02/= (np.std(diff_donnee) * np.std(nombre_indices) * n)
+corr_02/= (np.std(diff_donnee) * np.std(density) * n)
+corr_03/= (np.std(diff_donnee) * np.std(nombre_indices) * n)
+corr_04/= (np.std(diff_donnee) * np.std(nb_notes) * n)
+corr_05/= (np.std(diff_donnee) * np.std(repartition) * n)
 corr_12/= (np.std(nombre_indices) * np.std(diff_calculee) * n)
+corr_35/= (np.std(repartition)*np.std(nombre_indices)*n)
+corr_06/= (np.std(mix)*np.std(diff_donnee)*n)
 
 print("corr_01 =", corr_01)
 print("corr_02 =", corr_02)
+print("corr_03 =", corr_03)
+print("corr_04 =", corr_04)
+print("corr_05 =", corr_05)
 print("corr_12 =", corr_12)
+print("corr_35 = ",corr_35)
+print("corr_06 = ", corr_06)

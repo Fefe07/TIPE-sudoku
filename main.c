@@ -206,7 +206,7 @@ int main() {
 		if(nbGrille%100 == 0){
 			printf("Grille n %d\n", nbGrille);
 		}
-		grid_one_diff g = lecture_db_C(nbGrille+2, "grilles/db_C.csv");
+		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
 		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
 		//printGrid(g.grid);
@@ -247,11 +247,11 @@ int main() {
 
 	
 
-	FILE* g = fopen("results_db_C/results_criteria.txt", "w");
-	for(int i = 0; i<1500; i++){
+	FILE* g = fopen("results_db_B/results_criteria.txt", "w");
+	for(int i = 0; i<results_size; i++){
 		/* La résolution altère la grille donnée en argument*/
 		//printf("################## Grille n° %d ############\n",i);
-		grid_one_diff g1 = lecture_db_C(i+2, "grilles/db_C.csv");
+		grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
 		int nb_clues = assess_nb_clues(g1.grid);
 
 		float f2 = assess_cnf(g1.grid);
@@ -259,7 +259,7 @@ int main() {
 		int repartition = assess_repartition(g1.grid);
 		float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
 		fprintf(g, "%d , %f , %f , %d, %d , %d ",g1.difficulty, f1, f2,nb_clues, nb_notes, repartition);
-		if(i<1499){
+		if(i<results_size-1){
 			fprintf(g,";\n");
 		}
 	}
