@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <math.h>
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -116,7 +116,8 @@ float assess_cnf(int** grid);
 
 float assess_techniques(int** grid, float* coeffs, float* coeffs_first_use);
 int assess_nb_notes(int** grid);
-int assess_repartition(int** grid);
+float assess_repartition(int** grid);
+float assess_repartition_valeurs(int** grid);
 int assess_nb_clues(int** grid);
 
 
@@ -256,9 +257,10 @@ int main() {
 
 		float f2 = assess_cnf(g1.grid);
 		int nb_notes = assess_nb_notes(g1.grid);
-		int repartition = assess_repartition(g1.grid);
+		float repartition = assess_repartition(g1.grid);
+		float repartition_valeurs = assess_repartition_valeurs(g1.grid);
 		float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
-		fprintf(g, "%d , %f , %f , %d, %d , %d ",g1.difficulty, f1, f2,nb_clues, nb_notes, repartition);
+		fprintf(g, "%d , %f , %f , %d, %d , %f, %f ",g1.difficulty, f1, f2,nb_clues, nb_notes, repartition, repartition_valeurs);
 		if(i<results_size-1){
 			fprintf(g,";\n");
 		}

@@ -6,9 +6,9 @@ int assess_nb_clues(int** grid);
 
 
 
-int assess_repartition(int** grid){
+float assess_repartition(int** grid){
 
-    int r = 0 ;
+    float r = 0 ;
     float moy = assess_nb_clues(grid)/9. ;
 
     float v= 0 ;
@@ -56,4 +56,27 @@ int assess_repartition(int** grid){
     r+=sqrt(v/9.);
 
     return r ;
+}
+
+
+float assess_repartition_valeurs(int** grid){
+
+    float moy = assess_nb_clues(grid)/9. ;
+
+    float v= 0 ;
+    for (int k = 0; k<9; k++){
+        // mesure la répartition sur les lignes
+        int s = 0;
+        for(int i = 0; i<9; i++){
+            for(int j = 0; j<9; j++){
+                if(grid[i][j]==k+1){
+                    s++;
+                }
+            }
+        }
+        /* A modifier !!!!!!!!!!!! */
+        v+= (s-moy)*(s-moy);
+    }
+
+    return sqrt(v/9.);
 }
