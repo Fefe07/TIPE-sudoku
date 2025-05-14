@@ -181,9 +181,11 @@ float *cree_coeffs_first_use() {
 
 int main() {
 	
+	FILE *h = fopen("results_heuristics/db_B.txt", "w");
+	int results_size = 344 ;
 
-	for(int nbGrille = 0; nbGrille<10; nbGrille++){
-		grid_diffs g1 = lecture_db_diffs(nbGrille+13, "grilles/Bases_de_donnees_evaluees.csv");
+	for(int nbGrille = 0; nbGrille<results_size; nbGrille++){
+		grid_one_diff g1 = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
 		k_cnf phi = sudoku_to_cnf(g1.grid);
 		printGrid(g1.grid);
 		//print_k_cnf(phi);
@@ -203,6 +205,17 @@ int main() {
 		print_tab_int(nb_disjonctions, profondeur_max);
 		print_tab_int(nb_quines, profondeur_max);
 
+		for(int i = 0; i<profondeur_max; i++){
+			fprintf(h, "%d,  ",nb_disjonctions[i]);
+		}
+		for(int i = 0; i<profondeur_max; i++){
+			fprintf(h, "%d,  ",nb_quines[i]);
+		}
+		fprintf(h,"%d, ", g1.difficulty);
+		if(nbGrille<results_size-1){
+			fprintf(h,";\n");
+		}
+
 		free_k_cnf(phi);
 		free(nb_disjonctions);
 		free(nb_quines);
@@ -215,7 +228,7 @@ int main() {
 	// float *coeffs = cree_coeffs();
 	// float *coeffs_first_use = cree_coeffs_first_use();
 
-	// int results_size = 1500;
+	// int results_size = 344	;
 	// FILE *f = fopen("resultats.txt", "w");
 
 
@@ -228,11 +241,11 @@ int main() {
 	// 	if(nbGrille%100 == 0){
 	// 		printf("Grille n %d\n", nbGrille);
 	// 	}
-	// 	grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
+	// 	grid_diffs g = lecture_db_diffs(nbGrille+2, "grilles/Base_de_donnees_evaluees.csv");
 	// 	//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
 	// 	//printGrid(g.grid);
-	// 	difficulties[nbGrille] = (float) g.difficulty;
+	// 	difficulties[nbGrille] = (float) g.D_TR;
 	// 	float *nb_tech = malloc(13 * sizeof(float));
 	// 	for (int i = 0; i < 13; i++) {
 	// 		nb_tech[i] = 0.;
@@ -269,11 +282,11 @@ int main() {
 
 	
 
-	// FILE* g = fopen("results_db_B/results_criteria.txt", "w");
+	// FILE* g = fopen("results_db_0/results_criteria.txt", "w");
 	// for(int i = 0; i<results_size; i++){
 	// 	/* La résolution altère la grille donnée en argument*/
 	// 	//printf("################## Grille n° %d ############\n",i);
-	// 	grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
+	// 	grid_diffs g1 = lecture_db_diffs(i+2, "grilles/Base_de_donnees_evaluees.csv");
 	// 	int nb_clues = assess_nb_clues(g1.grid);
 
 	// 	float f2 = assess_cnf(g1.grid);
@@ -281,7 +294,7 @@ int main() {
 	// 	float repartition = assess_repartition(g1.grid);
 	// 	float repartition_valeurs = assess_repartition_valeurs(g1.grid);
 	// 	float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
-	// 	fprintf(g, "%d , %f , %f , %d, %d , %f, %f ",g1.difficulty, f1, f2,nb_clues, nb_notes, repartition, repartition_valeurs);
+	// 	fprintf(g, "%f , %f , %f , %d, %d , %f, %f ",g1.D_TR, f1, f2,nb_clues, nb_notes, repartition, repartition_valeurs);
 	// 	if(i<results_size-1){
 	// 		fprintf(g,";\n");
 	// 	}

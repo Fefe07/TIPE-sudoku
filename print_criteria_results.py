@@ -9,7 +9,7 @@ Created on Mon May  5 18:13:53 2025
 import matplotlib.pyplot as plt
 import numpy as np
 
-f = open("results_db_B/results_criteria.txt","r")
+f = open("results_db_0/results_criteria.txt","r")
 
 l = f.read()
 m = np.matrix(l)
@@ -23,7 +23,7 @@ n,p = dimensions
 
 
 
-#n = n - 1300
+n = n - 10
 
 #trie les tableaux
 t = []
@@ -46,14 +46,14 @@ repartition_valeurs = n*[42]
 mix = n * [42]
 
 for i in range(n):
-    diff_donnee[i] = t[i][0]
+    diff_donnee[i] = t[i][0]    
     diff_calculee[i] = t[i][1]
     density[i] = t[i][2]
     nombre_indices[i] = t[i][3] 
     nb_notes[i] = t[i][4] /25
     repartition[i] = t[i][5] 
     repartition_valeurs[i] = t[i][6]
-    mix[i] = 1.4*repartition_valeurs[i] - 1*repartition[i]  - nombre_indices[i]/14 + 6  # + nb_notes[i] /75
+    mix[i] = -1.*repartition_valeurs[i] + 1.5*repartition[i]  - 0.8*nombre_indices[i] + 20  # + nb_notes[i] /75
 
 
 
@@ -66,14 +66,14 @@ identite = range(n)
 #plt.semilogy()
 #plt.scatter(identite,diff_calculee, label="Difficulté calculée")
 plt.scatter(identite, diff_donnee, s=20, label="Difficulté donnée")
-#plt.scatter(identite, density,s=40, label="Densité")
-#plt.scatter(identite, nombre_indices, s=40, label="Nombre d'indices")
-#plt.scatter(identite, nb_notes, s=20, label="Nombre de notes/25")
+#plt.scatter(identite, density,s=20, label="Densité")
+#plt.scatter(identite, nombre_indices, s=20, label="Nombre d'indices")
+plt.scatter(identite, nb_notes, s=20, label="Nombre de notes/25")
 #plt.scatter(identite, repartition, s=20, label="Répartition géographique")
 #plt.scatter(identite, repartition_valeurs, s=20, label="Répartition des valeurs")
-plt.scatter(identite, mix, s=20, label ="Mix")
+#plt.scatter(identite, mix, s=20, label ="Mix")
 plt.xlabel("Sudokus")
-plt.ylabel("Difficulté(entier arbitraire) / mix(réel)")
+plt.ylabel("Difficulté(réel arbitraire) / mix(réel)")
 #plt.title("Recuit simulé avec coeffs de première utilisation")
 plt.legend()
 plt.show()

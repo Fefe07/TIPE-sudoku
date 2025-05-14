@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include<time.h>
 
 typedef struct var_s{
     /* Une variable est de la forme p_i,j,k, elle indique si la case i,j contient k */
@@ -494,9 +495,13 @@ void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines){
     /* nb_disjonctions contient le nombre de disjonction à chaque profondeur */
     /* nb_quines contient le nombre de quines à chaque profondeur*/
 
+    
+
     while(f->m>0){
         //printf(" m = %d\n", f->m);
+
         lit_set* found = quine(f) ;
+
         nb_quines[0]++ ;
         //print_k_cnf(f);
         if(found==NULL){
@@ -507,8 +512,9 @@ void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines){
         }
         else{
             if(ls_is_empty(*found)){
+
                 lit_set ls = disjonction(f, h, nb_disjonctions, nb_quines, 0);
-                
+
                 printf (" ls = \n");
                 ls_print(ls);
                 ls_free(ls);
