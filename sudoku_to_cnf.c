@@ -52,22 +52,26 @@ void print_var(var v){
     printf("i = %d, j = %d, k = %d\n", v.i, v.j, v.k);
 }
 
+void print_clause(clause c){
+    for(int b = 0; b<c.nb_lit;b++){
+            if(c.positif[b]){
+                printf("x_%d,%d,%d ", c.vars[b].i, c.vars[b].j, c.vars[b].k);
+            }
+            else{
+                printf("not x_%d,%d,%d ", c.vars[b].i, c.vars[b].j, c.vars[b].k);
+            }
+            if(b<c.nb_lit-1){
+                printf("or ");
+            }
+        }
+    printf("\n");
+}
+
 void print_k_cnf(k_cnf f){
     printf("m = %d\n",f->m);
     printf("k = %d\n", f->k);
     for(int a = 0; a<f->m; a++){
-        for(int b = 0; b<f->clauses[a].nb_lit;b++){
-            if(f->clauses[a].positif[b]){
-                printf("x_%d,%d,%d ", f->clauses[a].vars[b].i, f->clauses[a].vars[b].j, f->clauses[a].vars[b].k);
-            }
-            else{
-                printf("not x_%d,%d,%d ", f->clauses[a].vars[b].i, f->clauses[a].vars[b].j, f->clauses[a].vars[b].k);
-            }
-            if(b<f->clauses[a].nb_lit-1){
-                printf("or ");
-            }
-        }
-        printf("\n");
+        print_clause(f->clauses[a]);
     }
 }
 
@@ -211,7 +215,7 @@ k_cnf sudoku_to_cnf(int** grid){
                     int i2 = 3*(z/3)+c2/3 ;
                     int j2 = 3*(z%3)+c2%3 ;
                     clauses_1in9[9*i2+j2].filtre[k] = false ;
-                    clauses_1in9[162 + 9*i2+k].filtre[j2] = false ;
+                    clauses_1in9[81 + 9*i2+k].filtre[j2] = false ;
                     clauses_1in9[162 + 9*j2+k].filtre[i2] = false ;
                     
                 }

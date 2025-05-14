@@ -120,7 +120,8 @@ float assess_repartition(int** grid);
 float assess_repartition_valeurs(int** grid);
 int assess_nb_clues(int** grid);
 
-
+void solve_cnf(k_cnf f, var(*h)(k_cnf));
+var heuristique_0(k_cnf f);
 
 void print_tab_int(int *tab, int size) {
 	for (int i = 0; i < size; i++) {
@@ -178,6 +179,12 @@ float *cree_coeffs_first_use() {
 
 
 int main() {
+	int** grid = grid_of_string("000030402018090000004700800006402000029000000500080000030170060000000190050008000");
+	k_cnf phi = sudoku_to_cnf(grid);
+	printGrid(grid);
+	print_k_cnf(phi);
+	solve_cnf(phi, &heuristique_0);
+
 	srand(time(NULL));
 	float *coeffs = cree_coeffs();
 	float *coeffs_first_use = cree_coeffs_first_use();
