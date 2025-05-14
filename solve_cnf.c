@@ -204,11 +204,12 @@ lit_set ls_inter(lit_set ls1, lit_set ls2){
     /* Fait l'intersection de ls1 et ls2 */
     if(ls2!=NULL){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
-            lit_set ls = ls_singleton(ls2->v, ls2->positif);
+            lit_set sing = ls_singleton(ls2->v, ls2->positif);
             lit_set inter = ls_inter(ls1,ls2->next);
-            lit_set ls3 = ls_union(ls, inter);
+            lit_set ls = ls_union(sing, inter);
             ls_free(inter);
-            return ls3 ;
+            ls_free(sing);
+            return ls ;
         }
         else{
             return ls_inter(ls1,ls2->next);
@@ -550,20 +551,20 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
     }
 
 
-    lit_set ls = ls_inter(modified_f, modified_t);
     //printf("ls = \n");
     //ls_print(ls);
-    assert(ls != NULL);
-    for(lit_set c = ls; c !=NULL; c = c->next){
+    assert(inter != NULL);
+    for(lit_set c = inter; c !=NULL; c = c->next){
         substitue(c->v, c->positif, f);
     }
 
+    
     ls_free(modified_f);
     ls_free(modified_t);
     free_k_cnf(f_false);
     free_k_cnf(f_true);
 
-    return ls ;
+    return inter ;
 
 }
 
