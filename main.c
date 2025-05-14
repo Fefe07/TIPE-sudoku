@@ -182,7 +182,7 @@ float *cree_coeffs_first_use() {
 int main() {
 	
 	FILE *h = fopen("results_heuristics/db_B.txt", "w");
-	int results_size = 344 ;
+	int results_size = 10 ;
 
 	for(int nbGrille = 0; nbGrille<results_size; nbGrille++){
 		grid_one_diff g1 = lecture_db_B(nbGrille+2, "grilles/db_B.csv");

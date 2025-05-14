@@ -142,7 +142,7 @@ bool ls_mem(var v, bool b, lit_set ls){ //ok
 
 lit_set ls_union(lit_set ls1, lit_set ls2){
     /* Fait l'union de ls1 et ls2 */
-    /* *ls1 est modifié pour contenit cette union */
+    /* *ls1 n'est pas modifié pour contenit cette union */
     /* ls2 n'est pas libéré ni altéré */
     if(ls2!=NULL){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
@@ -190,7 +190,7 @@ void ls_print(lit_set ls){
 
 void ls_free(lit_set ls){
     if(ls!=NULL){
-        free(ls->next);
+        ls_free(ls->next);
         free(ls);
     }
 }
@@ -206,9 +206,9 @@ lit_set ls_inter(lit_set ls1, lit_set ls2){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
             lit_set ls = ls_singleton(ls2->v, ls2->positif);
             lit_set inter = ls_inter(ls1,ls2->next);
-            ls = ls_union(ls, inter);
+            lit_set ls3 = ls_union(ls, inter);
             ls_free(inter);
-            return ls ;
+            return ls3 ;
         }
         else{
             return ls_inter(ls1,ls2->next);
@@ -407,7 +407,8 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
     bool finished_quine_f = false ;
     //printf("Coucou\n");
 
-    while( ls_is_empty(ls_inter(modified_t, modified_f))){
+    lit_set inter = ls_inter(modified_t, modified_f);
+    while( ls_is_empty(inter)){
 
         if(!finished_quine_t){
             if(f_true->m == 0){
@@ -431,7 +432,9 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                     finished_quine_t = true ;
                 }
                 else{
+                    lit_set temp = modified_t ;
                     modified_t = ls_union(modified_t, *found);
+                    ls_free(temp);
                     ls_free(*found);
                     free(found);
                 }
@@ -468,7 +471,9 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                     finished_quine_f = true ;
                 }
                 else{
+                    lit_set temp = modified_f ;
                     modified_f = ls_union(modified_f, *found);
+                    ls_free(temp);
                     ls_free(*found);
                     free(found);
                 }
@@ -496,14 +501,15 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                     //printf("ls est non vide\n");
                     lit_set temp = modified_t ;
                     modified_t = ls_union(modified_t, ls);
-                    free(ls);
-                    free(temp);
+                    ls_free(ls);
+                    ls_free(temp);
                 }
                 else{
                     /* Alors f est nécéssairement insatisfiable*/
                     for(lit_set c = modified_f; c !=NULL; c = c->next){
                         substitue(c->v, c->positif, f);
                     }
+                    ls_free(ls);
                     ls_free(modified_t);
                     free_k_cnf(f_false);
                     free_k_cnf(f_true);
@@ -519,14 +525,15 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                     //printf("ls est non vide\n");
                     lit_set temp = modified_f ;
                     modified_f = ls_union(modified_f, ls);
-                    free(ls);
-                    free(temp);
+                    ls_free(ls);
+                    ls_free(temp);
                 }
                 else{
                     /* Alors f est nécéssairement insatisfiable*/
                     for(lit_set c = modified_t; c !=NULL; c = c->next){
                         substitue(c->v, c->positif, f);
                     }
+                    ls_free(ls);
                     ls_free(modified_f);
                     free_k_cnf(f_false);
                     free_k_cnf(f_true);
@@ -536,6 +543,10 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 finished_quine_f = false;
             }
         }
+
+        lit_set temp = inter ;
+        inter = ls_inter(modified_t, modified_f);
+        ls_free(temp);
     }
 
 
@@ -584,8 +595,8 @@ void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines){
 
                 lit_set ls = disjonction(f, h, nb_disjonctions, nb_quines, 0);
 
-                printf (" ls = \n");
-                ls_print(ls);
+                //printf (" ls = \n");
+                //ls_print(ls);
                 ls_free(ls);
                 //print_k_cnf(f);
             }
