@@ -80,7 +80,7 @@ void queue_push(queue q, k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2){
     m-> next = NULL ;
     m->prec = q->tail ;
     if(q->tail!=NULL){
-        q->tail->prec = m ;
+        q->tail->next = m ;
     }
     else{
         q->head = m ;
@@ -91,13 +91,14 @@ void queue_push(queue q, k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2){
 maillon queue_pop(queue q){
     assert(q->head !=NULL);
     maillon m = q->head ;
+    q->head = q->head->next ;
     if(q->head!=NULL){
-        q->head->next = NULL ;
+        q->head->prec = NULL ;
     }
     else{
         q->tail = NULL ;
     }
-    q->head = q->head->next ;
+    
     return m ;
 }
 
@@ -117,7 +118,7 @@ bool egal_vars(var v1, var v2){
 }
 
 
-bool ls_mem(var v, bool b, lit_set ls){
+bool ls_mem(var v, bool b, lit_set ls){ //ok
     return ((ls!=NULL)&&((egal_vars(v,ls->v) && b == ls->positif)|| ls_mem(v, b,ls->next)));
 }
 
@@ -160,6 +161,13 @@ lit_set ls_singleton(var v, bool positif){
     ls->positif = positif ;
     ls->next = NULL ;
     return ls ;
+}
+
+void ls_print(lit_set ls){
+    if(ls!=NULL){
+        printf("i = %d, j = %d, k = %d, b = %d\n", ls->v.i, ls->v.j, ls->v.k, ls->positif);
+        ls_print(ls->next);
+    }
 }
 
 void ls_free(lit_set ls){
@@ -244,27 +252,27 @@ void substitue(var v, bool b, k_cnf f){
     }
 }
 
-lit_set* quine(k_cnf f){
+lit_set* quine(k_cnf f){ //ok
     /* Effectue une itération de Quine sur f */
     /* Modifie f au passage */
     /* Renvoie un singleton contenant la variable si une variable est trouvée */
     /* Renvoie un pointeur sur l'ensemble vide si aucune variable est trouvée */
     /* Renvoie NULL si la formule est insatisfiable car une clause est vide */
     
-    printf("########### Quine : ############\n");
+    //printf("########### Quine : ############\n");
     for(int c = 0; c<f->m; c++){
         //printf("%d   ", f->clauses[c].nb_lit);
         //print_clause(f->clauses[c]);
         if(f->clauses[c].nb_lit == 1){
             lit_set* found = malloc(sizeof(lit_set));
             assert(found!=NULL);
-            printf("Clause à un littéral trouvée : i = %d, j = %d, k = %d, b = %d\n", f->clauses[c].vars[0].i,f->clauses[c].vars[0].j, f->clauses[c].vars[0].k, f->clauses[c].positif[0]);
+            //printf("Clause à un littéral trouvée : i = %d, j = %d, k = %d, b = %d\n", f->clauses[c].vars[0].i,f->clauses[c].vars[0].j, f->clauses[c].vars[0].k, f->clauses[c].positif[0]);
             *found = ls_singleton(f->clauses[c].vars[0], f->clauses[c].positif[0]);
             substitue(f->clauses[c].vars[0], f->clauses[c].positif[0],f);
             return found ;
         }
         else if(f->clauses[c].nb_lit == 0){
-            printf("Formule insatisfiable\n");
+            //printf("Formule insatisfiable\n");
             
             return NULL ;
         }
@@ -293,61 +301,80 @@ bool*** copy_notes(bool*** notes){
 }
 
 k_cnf k_cnf_copy(k_cnf f){
+    //printf("Begin k_cnf_copy\n");
     k_cnf g = malloc(sizeof(struct k_cnf_s));
     assert(g!=NULL);
     g->m = f->m ;
     g->k = f->k ;
+    g->clauses = malloc(g->m * sizeof(clause));
+    assert(g->clauses!=NULL);
     for(int c = 0; c<f->m; c++){
         clause c2 ;
         c2.nb_lit = f->clauses[c].nb_lit ;
+
         c2.vars = malloc(c2.nb_lit*sizeof(var));
         assert(c2.vars!=NULL);
         c2.positif = malloc(c2.nb_lit*sizeof(bool));
         assert(c2.positif!=NULL);
+
         for(int i = 0; i<c2.nb_lit;i++){
             c2.vars[i] = f->clauses[c].vars[i];
             c2.positif[i] = f->clauses[c].positif[i];
         }
+
         g->clauses[c] = c2 ;
+
     }
     return g;
 }
 
-void disjonction(k_cnf f, var(*h)(k_cnf));
+lit_set disjonction(k_cnf f, var(*h)(k_cnf));
 
 void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)(k_cnf)){
     /* Effectue l'opération élémentaire associée à la formule f  */
     /* Les variables trouvées sont mises dans *ls_ptr1 */
     /* Si *ls_ptr1 inter *ls_ptr2 est non vide, on s 'arrête */
     
-    if(f->m > 0){
+    //printf("Solve_cnf_aux\n");
+
+    /* On ne continue pas si on a trouvé quelque chose */
+    if(f->m > 0 && (ls_is_empty(ls_inter(*ls_ptr1, *ls_ptr2)))){
 
         lit_set* found = quine(f);
 
         /* Si la clause est satisfiable, on continue*/
         if(found!=NULL){
-            *ls_ptr1 = ls_union(*ls_ptr1, *found);
-            /* On ne continue pas si on a pas trouvé quelque chose */
-            if(ls_is_empty(ls_inter(*ls_ptr1, *ls_ptr2))){
-                if(found == NULL){
-                    
-                    
-                    disjonction(f,h);
-
-                    /* Et là, on déroule les deux en même temps et on cherche les similitudes */
-                    /* En dérouler un seul reproduirait un vrai backtracking (même humain), */
-                    /* alors que dérouler les deux d'un coup jusqu'à trouver une similitude */
-                    /* ou une contradiction imite les raisonnements humains */
+            if(*found == NULL){
+                
+                lit_set ls = disjonction(f,h);
+                //ls_print(ls);
+                if(!ls_is_empty(ls)){
+                    //printf("ls est non vide\n");
+                    *ls_ptr1 = ls_union(*ls_ptr1, ls);
+                    if(ls_is_empty(ls_inter(*ls_ptr1, *ls_ptr2))){
+                        queue_push(q,f,ls_ptr1, ls_ptr2);
+                    }
                 }
                 else{
-                    queue_push(q,f,ls_ptr1, ls_ptr2);
+                    /* Alors f est nécéssairement insatisfiable*/
+                    *ls_ptr1 = ls_union(*ls_ptr1, *ls_ptr2);
+                    //printf("*ls_ptr1 = \n");
+                    //ls_print(*ls_ptr1);
                 }
+            
             }
+            else{
+                *ls_ptr1 = ls_union(*ls_ptr1, *found);
+                ls_free(*found);
+                free(found);
+                queue_push(q,f,ls_ptr1, ls_ptr2);
+            }
+            
         }
         else{
             /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
-            /* N.B. On ne dit pas que l'autre claise est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
-
+            /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
+            //printf("La formule est insatisfiable d'après Quine\n");
             *ls_ptr1 = ls_union(*ls_ptr1, *ls_ptr2);
         }
         
@@ -356,47 +383,67 @@ void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)
 }
 
 
-void disjonction(k_cnf f, var(*h)(k_cnf)){
+lit_set disjonction(k_cnf f, var(*h)(k_cnf)){
     /* Résout la formule de logique propositionelle f associée à la grille grid */
     /* Avec l'algortihme de Quine */
     /* L'heuristique utilisée est passée en argument*/
+    /* Renvoie l'ensemble des litéraux communes (qui sont donc nécéssairement vrais)*/
 
-    printf("Disjonction !\n");
+    //printf("Disjonction !\n");
 
     queue q = queue_create();
 
+    //printf("File créée\n");
     /* Heuristique passée en argument, trouve la variable pour la disjonction */
     var v = h(f);
+    //printf("Variable trouvée\n");
 
     k_cnf f_true = k_cnf_copy(f);
     k_cnf f_false = k_cnf_copy(f);
 
     lit_set* modified_t = malloc(sizeof(lit_set)) ;
     assert(modified_t!=NULL);
+    *modified_t = ls_singleton(v, true);
+    substitue(v, true, f_true);
+
     lit_set* modified_f = malloc(sizeof(lit_set)) ; 
     assert(modified_f!=NULL);
+    *modified_f = ls_singleton(v,false);
+    substitue(v, false, f_false);
 
+    //printf("Coucou\n");
     queue_push(q,f_true,modified_t, modified_f);
     queue_push(q,f_false,modified_f, modified_t);
+
+    //printf("File remplie\n");
+
     while(!queue_is_empty(q)){
         maillon m = queue_pop(q);
         solve_cnf_aux(m->f,m->lsptr1, m->lsptr2, q, h);
         
     }
 
+    //printf(" ###################################### File vidée ! ###############\n");
+
     lit_set ls = ls_inter(*modified_f, *modified_t);
+    //printf("ls = \n");
+    //ls_print(ls);
     assert(ls != NULL);
     for(lit_set c = ls; c !=NULL; c = c->next){
         substitue(c->v, c->positif, f);
     }
+
+    return ls ;
 
 }
 
 
 
 void solve_cnf(k_cnf f, var(*h)(k_cnf)){
+    /* Fonctionne sans disjonction ! */
 
     while(f->m>0){
+        //printf("#######################m = %d\n", f->m);
         lit_set* found = quine(f) ;
         //print_k_cnf(f);
         if(found==NULL){
@@ -407,7 +454,10 @@ void solve_cnf(k_cnf f, var(*h)(k_cnf)){
         }
         else{
             if(ls_is_empty(*found)){
-                disjonction(f, h);
+                lit_set ls = disjonction(f, h);
+                printf (" ls = \n");
+                ls_print(ls);
+                //print_k_cnf(f);
             }
             
         }
