@@ -294,11 +294,12 @@ k_cnf sudoku_to_cnf(int** grid){
     // for(int i = 0; i<m; i++){
     //     free_clause(clauses[i]);
     // }
-    // free(clauses);
+    free(clauses);
     for(int i =0; i<324; i++){
         free_clause_1in9(clauses_1in9[i]);
     }
     free(clauses_1in9);
+    free(filtre);
 
     k_cnf f = malloc(sizeof(struct k_cnf_s));
     assert(f!=NULL);

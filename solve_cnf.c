@@ -63,6 +63,14 @@ void print_var(var v);
 void print_clause(clause c);
 void print_k_cnf(k_cnf f);
 
+void free_k_cnf(k_cnf f){
+    for(int a = 0; a<f->m ; a++){
+        free_clause(f->clauses[a]);
+    }
+    free(f->clauses);
+    free(f);
+}
+
 queue queue_create(){
     queue q = malloc(sizeof(struct queue_s));
     assert(q!=NULL);
@@ -112,6 +120,12 @@ bool queue_is_empty(queue q){
     }
 }
 
+
+
+void free_empty_queue(queue q){
+    assert(queue_is_empty(q));
+    free(q);
+}
 
 bool egal_vars(var v1, var v2){
     return (v1.i == v2.i)&&(v1.j == v2.j) && (v1.k == v2.k);
@@ -204,8 +218,17 @@ lit_set ls_inter(lit_set ls1, lit_set ls2){
 
 var heuristique_0(k_cnf f){
     assert(f->m>0);
-    assert(f->clauses[0].nb_lit>0);
-    return f->clauses[0].vars[0];
+    int nb_lit_min = 42; 
+    clause c_min ;
+    for(int c = 0; c<f->m; c++){
+        /* On cherche les clauses à valeurs positives !*/
+        if(f->clauses[c].nb_lit<nb_lit_min && f->clauses[c].positif[0]){
+            nb_lit_min = f->clauses[c].nb_lit ;
+            c_min = f->clauses[c] ;
+        }
+    }
+    assert(nb_lit_min>1); // sinon on n'appelerait pas h
+    return c_min.vars[0];
 }
 
 void substitue(var v, bool b, k_cnf f){
@@ -328,9 +351,9 @@ k_cnf k_cnf_copy(k_cnf f){
     return g;
 }
 
-lit_set disjonction(k_cnf f, var(*h)(k_cnf));
+lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines, int profondeur);
 
-void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)(k_cnf)){
+void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines, int profondeur){
     /* Effectue l'opération élémentaire associée à la formule f  */
     /* Les variables trouvées sont mises dans *ls_ptr1 */
     /* Si *ls_ptr1 inter *ls_ptr2 est non vide, on s 'arrête */
@@ -341,25 +364,36 @@ void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)
     if(f->m > 0 && (ls_is_empty(ls_inter(*ls_ptr1, *ls_ptr2)))){
 
         lit_set* found = quine(f);
+        nb_quines[profondeur]++;
+        
 
         /* Si la clause est satisfiable, on continue*/
         if(found!=NULL){
             if(*found == NULL){
-                
-                lit_set ls = disjonction(f,h);
+                free(found) ;
+
+                lit_set ls = disjonction(f,h, nb_disjonctions, nb_quines, profondeur);
                 //ls_print(ls);
                 if(!ls_is_empty(ls)){
                     //printf("ls est non vide\n");
+                    lit_set temp = *ls_ptr1 ;
                     *ls_ptr1 = ls_union(*ls_ptr1, ls);
-                    if(ls_is_empty(ls_inter(*ls_ptr1, *ls_ptr2))){
+                    free(ls);
+                    free(temp);
+
+                    lit_set inter = ls_inter(*ls_ptr1, *ls_ptr2);
+                    if(ls_is_empty(inter)){
                         queue_push(q,f,ls_ptr1, ls_ptr2);
                     }
+                    free(inter);    
                 }
                 else{
                     /* Alors f est nécéssairement insatisfiable*/
+                    lit_set temp = *ls_ptr1 ;
                     *ls_ptr1 = ls_union(*ls_ptr1, *ls_ptr2);
-                    //printf("*ls_ptr1 = \n");
-                    //ls_print(*ls_ptr1);
+                    ls_free(temp);
+                    printf("*ls_ptr1 = \n");
+                    ls_print(*ls_ptr1);
                 }
             
             }
@@ -375,7 +409,9 @@ void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)
             /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
             /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
             //printf("La formule est insatisfiable d'après Quine\n");
+            lit_set temp = *ls_ptr1 ;
             *ls_ptr1 = ls_union(*ls_ptr1, *ls_ptr2);
+            ls_free(temp);
         }
         
     }
@@ -383,13 +419,17 @@ void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)
 }
 
 
-lit_set disjonction(k_cnf f, var(*h)(k_cnf)){
+lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines, int profondeur){
     /* Résout la formule de logique propositionelle f associée à la grille grid */
     /* Avec l'algortihme de Quine */
     /* L'heuristique utilisée est passée en argument*/
     /* Renvoie l'ensemble des litéraux communes (qui sont donc nécéssairement vrais)*/
 
     //printf("Disjonction !\n");
+    if(profondeur<3){
+        printf("profondeur = %d,  m = %d\n",profondeur, f->m);
+    }
+    nb_disjonctions[profondeur]++;
 
     queue q = queue_create();
 
@@ -419,9 +459,10 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf)){
 
     while(!queue_is_empty(q)){
         maillon m = queue_pop(q);
-        solve_cnf_aux(m->f,m->lsptr1, m->lsptr2, q, h);
+        solve_cnf_aux(m->f,m->lsptr1, m->lsptr2, q, h, nb_disjonctions, nb_quines, profondeur+1);
         
     }
+    
 
     //printf(" ###################################### File vidée ! ###############\n");
 
@@ -433,18 +474,30 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf)){
         substitue(c->v, c->positif, f);
     }
 
+    ls_free(*modified_f);
+    ls_free(*modified_t);
+    free(modified_f);
+    free(modified_t);
+    free_k_cnf(f_false);
+    free_k_cnf(f_true);
+    free_empty_queue(q);
+
     return ls ;
 
 }
 
 
 
-void solve_cnf(k_cnf f, var(*h)(k_cnf)){
+void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines){
     /* Fonctionne sans disjonction ! */
 
+    /* nb_disjonctions contient le nombre de disjonction à chaque profondeur */
+    /* nb_quines contient le nombre de quines à chaque profondeur*/
+
     while(f->m>0){
-        //printf("#######################m = %d\n", f->m);
+        //printf(" m = %d\n", f->m);
         lit_set* found = quine(f) ;
+        nb_quines[0]++ ;
         //print_k_cnf(f);
         if(found==NULL){
             
@@ -454,11 +507,17 @@ void solve_cnf(k_cnf f, var(*h)(k_cnf)){
         }
         else{
             if(ls_is_empty(*found)){
-                lit_set ls = disjonction(f, h);
+                lit_set ls = disjonction(f, h, nb_disjonctions, nb_quines, 0);
+                
                 printf (" ls = \n");
                 ls_print(ls);
+                ls_free(ls);
                 //print_k_cnf(f);
             }
+            else{
+                ls_free(*found);
+            }
+            free(found);
             
         }
     }

@@ -120,7 +120,8 @@ float assess_repartition(int** grid);
 float assess_repartition_valeurs(int** grid);
 int assess_nb_clues(int** grid);
 
-void solve_cnf(k_cnf f, var(*h)(k_cnf));
+void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines);
+void free_k_cnf(k_cnf f);
 var heuristique_0(k_cnf f);
 
 void print_tab_int(int *tab, int size) {
@@ -179,109 +180,122 @@ float *cree_coeffs_first_use() {
 
 
 int main() {
-	int** grid = grid_of_string("000030402018090000004700800006402000029000000500080000030170060000000190050008000");
-	k_cnf phi = sudoku_to_cnf(grid);
-	printGrid(grid);
-	print_k_cnf(phi);
-	solve_cnf(phi, &heuristique_0);
-
-	srand(time(NULL));
-	float *coeffs = cree_coeffs();
-	float *coeffs_first_use = cree_coeffs_first_use();
-
-	int results_size = 1500;
-	FILE *f = fopen("resultats.txt", "w");
-
-	/*
-	int **grid = grid_of_string("645010893738459621219638745597060184481975000326"
-															"841579902080010803190000164020908");
-	float *t = malloc(12 * sizeof(float));
-	for (int i = 0; i < 12; i++) {
-		t[i] = 0.;
-	}
-	solve_notes(grid, initialize_notes(grid), t);
-	printGrid(grid);
-	print_tab_float(t, 12);
-	*/
-	float average_dtr = 1.458184 ;
 	
-	float **results = malloc(results_size * sizeof(float *));
-	assert(results != NULL);
-	float *difficulties = malloc(results_size * sizeof(float));
-	assert(difficulties != NULL);
 
-	for (int nbGrille = 0; nbGrille < results_size ; nbGrille++) {
-		if(nbGrille%100 == 0){
-			printf("Grille n %d\n", nbGrille);
+	for(int nbGrille = 0; nbGrille<10; nbGrille++){
+		grid_diffs g1 = lecture_db_diffs(nbGrille+13, "grilles/Bases_de_donnees_evaluees.csv");
+		k_cnf phi = sudoku_to_cnf(g1.grid);
+		printGrid(g1.grid);
+		//print_k_cnf(phi);
+
+		int profondeur_max = 20;
+
+		int* nb_disjonctions = malloc(profondeur_max*sizeof(int));
+		assert(nb_disjonctions!=NULL);
+		int* nb_quines = malloc(profondeur_max*sizeof(int));
+		assert(nb_quines!=NULL);
+		for(int i = 0; i<profondeur_max; i++){
+			nb_disjonctions[i] = 0; 
+			nb_quines[i] = 0;
 		}
-		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
-		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
+
+		solve_cnf(phi, &heuristique_0, nb_disjonctions, nb_quines);
+		print_tab_int(nb_disjonctions, profondeur_max);
+		print_tab_int(nb_quines, profondeur_max);
+
+		free_k_cnf(phi);
+		free(nb_disjonctions);
+		free(nb_quines);
+		free_grid(g1.grid);
+	}
+
+
+
+	// srand(time(NULL));
+	// float *coeffs = cree_coeffs();
+	// float *coeffs_first_use = cree_coeffs_first_use();
+
+	// int results_size = 1500;
+	// FILE *f = fopen("resultats.txt", "w");
+
+
+	// float **results = malloc(results_size * sizeof(float *));
+	// assert(results != NULL);
+	// float *difficulties = malloc(results_size * sizeof(float));
+	// assert(difficulties != NULL);
+
+	// for (int nbGrille = 0; nbGrille < results_size ; nbGrille++) {
+	// 	if(nbGrille%100 == 0){
+	// 		printf("Grille n %d\n", nbGrille);
+	// 	}
+	// 	grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
+	// 	//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
-		//printGrid(g.grid);
-		difficulties[nbGrille] = (float) g.difficulty;
-		float *nb_tech = malloc(13 * sizeof(float));
-		for (int i = 0; i < 13; i++) {
-			nb_tech[i] = 0.;
-		}
-		//printGrid(g.grid);
-		solve_simple_notes_backtrack(g.grid, nb_tech);
-		if(nbGrille%100 == 0){
-			print_tab_float(nb_tech, 13);
-		}
-		// print_tab_int(nb_tech, 10);
-		results[nbGrille] = nb_tech;
-		for (int i = 0; i < 13; i++) {
-			fprintf(f, "%f, ", nb_tech[i]);
-		}
+	// 	//printGrid(g.grid);
+	// 	difficulties[nbGrille] = (float) g.difficulty;
+	// 	float *nb_tech = malloc(13 * sizeof(float));
+	// 	for (int i = 0; i < 13; i++) {
+	// 		nb_tech[i] = 0.;
+	// 	}
+	// 	//printGrid(g.grid);
+	// 	solve_simple_notes_backtrack(g.grid, nb_tech);
+	// 	if(nbGrille%100 == 0){
+	// 		print_tab_float(nb_tech, 13);
+	// 	}
+	// 	// print_tab_int(nb_tech, 10);
+	// 	results[nbGrille] = nb_tech;
+	// 	for (int i = 0; i < 13; i++) {
+	// 		fprintf(f, "%f, ", nb_tech[i]);
+	// 	}
 		
-		fprintf(f, "%f ;\n", difficulties[nbGrille]);
+	// 	fprintf(f, "%f ;\n", difficulties[nbGrille]);
 		
-		free_grid(g.grid);
-	}
+	// 	free_grid(g.grid);
+	// }
 	
 
-	calcule_coeffs(coeffs,coeffs_first_use,results,difficulties, results_size);
+	// calcule_coeffs(coeffs,coeffs_first_use,results,difficulties, results_size);
 	
-	/* Calcul des coefficients par descente de gradient au formalisme douteux */
-	for (int i = 0; i < 13; i++) {
-		fprintf(f, "%f, ", coeffs[i]);
-	}
-	fprintf(f,"42;\n");
-	for (int i = 0; i < 13; i++) {
-		fprintf(f, "%f, ", coeffs_first_use[i]);
-	}
-	fprintf(f,"42\n");
-	fclose(f);
+	// /* Calcul des coefficients par descente de gradient au formalisme douteux */
+	// for (int i = 0; i < 13; i++) {
+	// 	fprintf(f, "%f, ", coeffs[i]);
+	// }
+	// fprintf(f,"42;\n");
+	// for (int i = 0; i < 13; i++) {
+	// 	fprintf(f, "%f, ", coeffs_first_use[i]);
+	// }
+	// fprintf(f,"42\n");
+	// fclose(f);
 
 	
 
-	FILE* g = fopen("results_db_B/results_criteria.txt", "w");
-	for(int i = 0; i<results_size; i++){
-		/* La résolution altère la grille donnée en argument*/
-		//printf("################## Grille n° %d ############\n",i);
-		grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
-		int nb_clues = assess_nb_clues(g1.grid);
+	// FILE* g = fopen("results_db_B/results_criteria.txt", "w");
+	// for(int i = 0; i<results_size; i++){
+	// 	/* La résolution altère la grille donnée en argument*/
+	// 	//printf("################## Grille n° %d ############\n",i);
+	// 	grid_one_diff g1 = lecture_db_B(i+2, "grilles/db_B.csv");
+	// 	int nb_clues = assess_nb_clues(g1.grid);
 
-		float f2 = assess_cnf(g1.grid);
-		int nb_notes = assess_nb_notes(g1.grid);
-		float repartition = assess_repartition(g1.grid);
-		float repartition_valeurs = assess_repartition_valeurs(g1.grid);
-		float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
-		fprintf(g, "%d , %f , %f , %d, %d , %f, %f ",g1.difficulty, f1, f2,nb_clues, nb_notes, repartition, repartition_valeurs);
-		if(i<results_size-1){
-			fprintf(g,";\n");
-		}
-	}
-	fclose(g);
+	// 	float f2 = assess_cnf(g1.grid);
+	// 	int nb_notes = assess_nb_notes(g1.grid);
+	// 	float repartition = assess_repartition(g1.grid);
+	// 	float repartition_valeurs = assess_repartition_valeurs(g1.grid);
+	// 	float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
+	// 	fprintf(g, "%d , %f , %f , %d, %d , %f, %f ",g1.difficulty, f1, f2,nb_clues, nb_notes, repartition, repartition_valeurs);
+	// 	if(i<results_size-1){
+	// 		fprintf(g,";\n");
+	// 	}
+	// }
+	// fclose(g);
 
 
-	free(coeffs);
-	free(coeffs_first_use);
-	for(int i = 0; i<results_size; i++){
-		free(results[i]);
-	}
-	free(results);
-	free(difficulties);
+	// free(coeffs);
+	// free(coeffs_first_use);
+	// for(int i = 0; i<results_size; i++){
+	// 	free(results[i]);
+	// }
+	// free(results);
+	// free(difficulties);
 
 	return 0;
 }
