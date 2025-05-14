@@ -41,22 +41,23 @@ struct lit_set_s {
 typedef struct lit_set_s* lit_set ;
 
 
-struct maillon_s {
-    k_cnf f ;
-    lit_set* lsptr1 ;
-    lit_set* lsptr2 ;
-    /* Le suivant dans la file ; vaut NULL pour la queue de file*/
-    struct maillon_s* next ;
-    /* Vaut NULL pour la tête de file */
-    struct maillon_s* prec ;
-} ;
-typedef struct maillon_s* maillon ;
+// struct maillon_s {
+//     k_cnf f ;
+//     lit_set* lsptr1 ;
+//     lit_set* lsptr2 ;
+//     bool val ; //suivant la valeur prise dans la disjonction précédente
+//     /* Le suivant dans la file ; vaut NULL pour la queue de file*/
+//     struct maillon_s* next ;
+//     /* Vaut NULL pour la tête de file */
+//     struct maillon_s* prec ;
+// } ;
+// typedef struct maillon_s* maillon ;
 
-struct queue_s {
-    maillon head ;
-    maillon tail ;
-};
-typedef struct queue_s* queue ;
+// struct queue_s {
+//     maillon head ;
+//     maillon tail ;
+// };
+// typedef struct queue_s* queue ;
 
 
 void free_clause(clause c);
@@ -72,7 +73,7 @@ void free_k_cnf(k_cnf f){
     free(f);
 }
 
-queue queue_create(){
+/* queue queue_create(){
     queue q = malloc(sizeof(struct queue_s));
     assert(q!=NULL);
     q->head = NULL ;
@@ -80,12 +81,13 @@ queue queue_create(){
     return q ;
 }
 
-void queue_push(queue q, k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2){
+void queue_push(queue q, k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, bool b){
     maillon m = malloc(sizeof(struct maillon_s));
     assert(m!=NULL);
     m->f = f ;
     m->lsptr1 = ls_ptr1 ;
     m->lsptr2 = ls_ptr2 ;
+    m->val = b ;
     m-> next = NULL ;
     m->prec = q->tail ;
     if(q->tail!=NULL){
@@ -127,6 +129,7 @@ void free_empty_queue(queue q){
     assert(queue_is_empty(q));
     free(q);
 }
+*/
 
 bool egal_vars(var v1, var v2){
     return (v1.i == v2.i)&&(v1.j == v2.j) && (v1.k == v2.k);
@@ -352,72 +355,21 @@ k_cnf k_cnf_copy(k_cnf f){
     return g;
 }
 
-lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines, int profondeur);
 
-void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines, int profondeur){
-    /* Effectue l'opération élémentaire associée à la formule f  */
-    /* Les variables trouvées sont mises dans *ls_ptr1 */
-    /* Si *ls_ptr1 inter *ls_ptr2 est non vide, on s 'arrête */
+
+// void solve_cnf_aux(k_cnf f, lit_set* ls_ptr1, lit_set* ls_ptr2, queue q, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines, int profondeur){
+//     /* Effectue l'opération élémentaire associée à la formule f  */
+//     /* Les variables trouvées sont mises dans modified_t */
+//     /* Si modified_t inter modified_f est non vide, on s 'arrête */
+//     /* Le booléen finished_quine sert à gérer les déséquilibres dans le nombre de quines possibles */
+
+
+//     //printf("Solve_cnf_aux\n");
+
+//     /* On ne continue pas si on a trouvé quelque chose */
     
-    //printf("Solve_cnf_aux\n");
 
-    /* On ne continue pas si on a trouvé quelque chose */
-    if(f->m > 0 && (ls_is_empty(ls_inter(*ls_ptr1, *ls_ptr2)))){
-
-        lit_set* found = quine(f);
-        nb_quines[profondeur]++;
-        
-
-        /* Si la clause est satisfiable, on continue*/
-        if(found!=NULL){
-            if(*found == NULL){
-                free(found) ;
-
-                lit_set ls = disjonction(f,h, nb_disjonctions, nb_quines, profondeur);
-                //ls_print(ls);
-                if(!ls_is_empty(ls)){
-                    //printf("ls est non vide\n");
-                    lit_set temp = *ls_ptr1 ;
-                    *ls_ptr1 = ls_union(*ls_ptr1, ls);
-                    free(ls);
-                    free(temp);
-
-                    lit_set inter = ls_inter(*ls_ptr1, *ls_ptr2);
-                    if(ls_is_empty(inter)){
-                        queue_push(q,f,ls_ptr1, ls_ptr2);
-                    }
-                    free(inter);    
-                }
-                else{
-                    /* Alors f est nécéssairement insatisfiable*/
-                    lit_set temp = *ls_ptr1 ;
-                    *ls_ptr1 = ls_union(*ls_ptr1, *ls_ptr2);
-                    ls_free(temp);
-                    printf("*ls_ptr1 = \n");
-                    ls_print(*ls_ptr1);
-                }
-            
-            }
-            else{
-                *ls_ptr1 = ls_union(*ls_ptr1, *found);
-                ls_free(*found);
-                free(found);
-                queue_push(q,f,ls_ptr1, ls_ptr2);
-            }
-            
-        }
-        else{
-            /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
-            /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
-            //printf("La formule est insatisfiable d'après Quine\n");
-            lit_set temp = *ls_ptr1 ;
-            *ls_ptr1 = ls_union(*ls_ptr1, *ls_ptr2);
-            ls_free(temp);
-        }
-        
-    }
-
-}
+// }
 
 
 lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines, int profondeur){
@@ -432,7 +384,7 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
     }
     nb_disjonctions[profondeur]++;
 
-    queue q = queue_create();
+
 
     //printf("File créée\n");
     /* Heuristique passée en argument, trouve la variable pour la disjonction */
@@ -442,32 +394,152 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
     k_cnf f_true = k_cnf_copy(f);
     k_cnf f_false = k_cnf_copy(f);
 
-    lit_set* modified_t = malloc(sizeof(lit_set)) ;
-    assert(modified_t!=NULL);
-    *modified_t = ls_singleton(v, true);
+    lit_set modified_t = ls_singleton(v, true);
     substitue(v, true, f_true);
 
-    lit_set* modified_f = malloc(sizeof(lit_set)) ; 
-    assert(modified_f!=NULL);
-    *modified_f = ls_singleton(v,false);
+    lit_set modified_f =  ls_singleton(v,false);
     substitue(v, false, f_false);
 
-    //printf("Coucou\n");
-    queue_push(q,f_true,modified_t, modified_f);
-    queue_push(q,f_false,modified_f, modified_t);
 
-    //printf("File remplie\n");
-
-    while(!queue_is_empty(q)){
-        maillon m = queue_pop(q);
-        solve_cnf_aux(m->f,m->lsptr1, m->lsptr2, q, h, nb_disjonctions, nb_quines, profondeur+1);
-        
-    }
     
+    bool finished_quine_t = false ;
 
-    //printf(" ###################################### File vidée ! ###############\n");
+    bool finished_quine_f = false ;
+    //printf("Coucou\n");
 
-    lit_set ls = ls_inter(*modified_f, *modified_t);
+    while( ls_is_empty(ls_inter(modified_t, modified_f))){
+
+        if(!finished_quine_t){
+            if(f_true->m == 0){
+                for(lit_set c = modified_t; c !=NULL; c = c->next){
+                    substitue(c->v, c->positif, f);
+                }
+                ls_free(modified_f);
+                free_k_cnf(f_false);
+                free_k_cnf(f_true);
+                return modified_t ;
+            }
+
+            lit_set* found = quine(f_true);
+            nb_quines[profondeur+1]++;
+            
+
+            /* Si la clause est satisfiable, on continue*/
+            if(found!=NULL){
+                if(*found == NULL){
+                    free(found) ;
+                    finished_quine_t = true ;
+                }
+                else{
+                    modified_t = ls_union(modified_t, *found);
+                    ls_free(*found);
+                    free(found);
+                }
+                
+            }
+            else{
+                /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
+                /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
+                //printf("La formule est insatisfiable d'après Quine\n");
+                lit_set temp = modified_t ;
+                modified_t = ls_union(modified_t, modified_f);
+                ls_free(temp);
+            }
+        }
+        else if(!finished_quine_f){
+            if(f_false->m == 0){
+                for(lit_set c = modified_f; c !=NULL; c = c->next){
+                    substitue(c->v, c->positif, f);
+                }
+                ls_free(modified_t);
+                free_k_cnf(f_false);
+                free_k_cnf(f_true);
+                return modified_f ;
+            }
+
+            lit_set* found = quine(f_false);
+            nb_quines[profondeur+1]++;
+            
+
+            /* Si la clause est satisfiable, on continue*/
+            if(found!=NULL){
+                if(*found == NULL){
+                    free(found) ;
+                    finished_quine_f = true ;
+                }
+                else{
+                    modified_f = ls_union(modified_f, *found);
+                    ls_free(*found);
+                    free(found);
+                }
+                
+            }
+            else{
+                /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
+                /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
+                //printf("La formule est insatisfiable d'après Quine\n");
+                lit_set temp = modified_f ;
+                modified_f = ls_union(modified_f, modified_t);
+                ls_free(temp);
+            }
+                
+            
+        }
+
+        else{
+
+            if(rand()%2 == 0){
+
+                lit_set ls = disjonction(f_true,h, nb_disjonctions, nb_quines, profondeur+1);
+                //ls_print(ls);
+                if(!ls_is_empty(ls)){
+                    //printf("ls est non vide\n");
+                    lit_set temp = modified_t ;
+                    modified_t = ls_union(modified_t, ls);
+                    free(ls);
+                    free(temp);
+                }
+                else{
+                    /* Alors f est nécéssairement insatisfiable*/
+                    for(lit_set c = modified_f; c !=NULL; c = c->next){
+                        substitue(c->v, c->positif, f);
+                    }
+                    ls_free(modified_t);
+                    free_k_cnf(f_false);
+                    free_k_cnf(f_true);
+                    return modified_f ;
+                }
+
+                finished_quine_t = false;
+            }
+            else{
+                lit_set ls = disjonction(f_false,h, nb_disjonctions, nb_quines, profondeur+1);
+                //ls_print(ls);
+                if(!ls_is_empty(ls)){
+                    //printf("ls est non vide\n");
+                    lit_set temp = modified_f ;
+                    modified_f = ls_union(modified_f, ls);
+                    free(ls);
+                    free(temp);
+                }
+                else{
+                    /* Alors f est nécéssairement insatisfiable*/
+                    for(lit_set c = modified_t; c !=NULL; c = c->next){
+                        substitue(c->v, c->positif, f);
+                    }
+                    ls_free(modified_f);
+                    free_k_cnf(f_false);
+                    free_k_cnf(f_true);
+                    return modified_t ;
+                }
+
+                finished_quine_f = false;
+            }
+        }
+    }
+
+
+    lit_set ls = ls_inter(modified_f, modified_t);
     //printf("ls = \n");
     //ls_print(ls);
     assert(ls != NULL);
@@ -475,13 +547,10 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
         substitue(c->v, c->positif, f);
     }
 
-    ls_free(*modified_f);
-    ls_free(*modified_t);
-    free(modified_f);
-    free(modified_t);
+    ls_free(modified_f);
+    ls_free(modified_t);
     free_k_cnf(f_false);
     free_k_cnf(f_true);
-    free_empty_queue(q);
 
     return ls ;
 
@@ -529,3 +598,8 @@ void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines){
     }
 
 }
+
+
+/* Questions : */
+// - Faut-il compter/différencier les quines vrais et faux ? 
+// (les quines faux sont des applications de règles)
