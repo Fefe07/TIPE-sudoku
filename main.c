@@ -132,7 +132,7 @@ void print_tab_int(int *tab, int size) {
 }
 void print_tab_float(float *tab, int size) {
 	for (int i = 0; i < size; i++) {
-		printf("%.4f,  ", tab[i]);
+		printf("%.6f,  ", tab[i]);
 	}
 	printf("\n");
 }
@@ -182,7 +182,18 @@ float *cree_coeffs_first_use() {
 int main() {
 	
 	FILE *h = fopen("results_heuristics/db_B.txt", "w");
-	int results_size = 10 ;
+	srand(time(NULL));
+	int results_size = 100 ;
+	int profondeur_max = 20;
+
+
+	float** results = malloc(results_size*sizeof(float*));
+	for(int i = 0; i<results_size; i++){
+		results[i] = malloc(2*profondeur_max*sizeof(float));
+	}
+
+	float* difficulties = malloc(results_size * sizeof(float));
+	assert(difficulties!=NULL);
 
 	for(int nbGrille = 0; nbGrille<results_size; nbGrille++){
 		grid_one_diff g1 = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
@@ -190,7 +201,7 @@ int main() {
 		printGrid(g1.grid);
 		//print_k_cnf(phi);
 
-		int profondeur_max = 20;
+		difficulties[nbGrille] = g1.difficulty ;
 
 		int* nb_disjonctions = malloc(profondeur_max*sizeof(int));
 		assert(nb_disjonctions!=NULL);
@@ -207,9 +218,11 @@ int main() {
 
 		for(int i = 0; i<profondeur_max; i++){
 			fprintf(h, "%d,  ",nb_disjonctions[i]);
+			results[nbGrille][i] = nb_disjonctions[i];
 		}
 		for(int i = 0; i<profondeur_max; i++){
 			fprintf(h, "%d,  ",nb_quines[i]);
+			results[nbGrille][i+profondeur_max] = nb_quines[i];
 		}
 		fprintf(h,"%d, ", g1.difficulty);
 		if(nbGrille<results_size-1){
@@ -222,6 +235,24 @@ int main() {
 		free_grid(g1.grid);
 	}
 
+
+
+
+	float* coeffs = malloc(profondeur_max*sizeof(float));
+	assert(coeffs!=NULL);
+	float* coeffs_first_use = malloc(profondeur_max*sizeof(float));
+	assert(coeffs_first_use!=NULL);
+ 
+	for(int i =0; i<profondeur_max; i++){
+		coeffs[i] = 1 ;
+		coeffs_first_use[i] = 1;
+	}
+
+
+	calcule_coeffs(coeffs, coeffs_first_use, results, difficulties, results_size);
+
+	print_tab_float(coeffs, 20);
+	print_tab_float(coeffs_first_use, 20);
 
 
 	// srand(time(NULL));

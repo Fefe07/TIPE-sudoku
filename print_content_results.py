@@ -64,7 +64,7 @@ for i in range(n-2):
 
 #plt.semilogy()
 plt.scatter(identite,diff_calculee,s=40, label="Difficulté calculée")
-plt.scatter(identite,diff_donnee,s=40, label="ln(Difficulté donnée+1)")
+plt.scatter(identite,diff_donnee,s=40, label="Difficulté donnée")
 plt.xlabel("Sudokus")
 plt.ylabel("Difficulté(réel arbitraire)")
 plt.title("Recuit simulé avec coeffs de première utilisation")

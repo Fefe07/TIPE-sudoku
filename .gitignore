@@ -52,6 +52,7 @@ Mkfile.old
 dkms.conf
 
 grilles/
+vgcore.*
 
 remarques_journault.txt
 afaire.txt

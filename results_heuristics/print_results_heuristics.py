@@ -10,6 +10,8 @@ m = np.matrix(texte)
 f.close()
 
 
+
+
 n,p = m.shape
 
 
@@ -17,35 +19,43 @@ n,p = m.shape
 
 ######## Sélectionne les données utiles
 y = np.delete(m,range(p-1),1)
-m = np.delete(m,p-1,1)
+m = np.delete(m,range((p-1)//2,p),1)
 
 n,p = m.shape
 
 
-# Supprime les colonnes liés, de telle sorte que m soit de rang maximal
-#print(m)
-j = 0
-for k in range(p) :
-    if np.linalg.matrix_rank(np.delete(m, range(j+1,p),1)) == j+1 :
-        j+=1
-    else :
-        print("colonne ",k," supprimée")
+# # Supprime les colonnes liés, de telle sorte que m soit de rang maximal
+# #print(m)
+# j = 0
+# for k in range(p) :
+#     if np.linalg.matrix_rank(np.delete(m, range(j+1,p),1)) == j+1 :
+#         j+=1
+#     else :
+#         print("colonne ",k," supprimée")
 
-        m = np.delete(m,j,1)
-    n,p = m.shape
-#print("m = ",m)
-#print("y = ",y)
+#         m = np.delete(m,j,1)
+#     n,p = m.shape
+# #print("m = ",m)
+# #print("y = ",y)
 
-n,p = m.shape
+# n,p = m.shape
 
 
-#### Résout le système
-mt = np.linalg.matrix_transpose(m)
-mtm = mt*m
-#print(mtm)
-#print(mt*y)
-x = np.linalg.solve(mt*m,mt*y)
-print("x=",x)
+# #### Résout le système
+# mt = np.linalg.matrix_transpose(m)
+# mtm = mt*m
+# #print(mtm)
+# #print(mt*y)
+# x = np.linalg.solve(mt*m,mt*y)
+# print("x=",x)
+
+ 
+
+
+
+coeffs = [0.0004,  0.0162,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0005,  0.5836,  1.0000,  1.0000,  1.0000,  1.0000,  1.0000,  1.0000,  1.0000 ]
+coeffs_first_use = [1.9987,  0.0043,  0.0064,  1.6947,  0.6508,  0.4345,  0.0023,  0.0016,  0.0013,  0.0011,  0.0034,  0.0021,  2.1012,  1.0000,  1.0000,  1.0000,  1.0000,  1.0000,  1.0000,  1.0000]
+
 
 # Calcule l'écart-type
 variance = 0
@@ -53,7 +63,11 @@ d = n * [0]
 for i in range(n) :
     diff = 0
     for j in range(p) :
-        diff += m[i,j] * x[j,0]
+        diff += m[i,j] * coeffs[j]
+        if(m[i,j]>0) :
+            diff += coeffs_first_use[j]
+        #diff = min(diff,50)
+       
     d[i] = diff
     variance += (diff - y[i])**2
 variance /= n
@@ -95,7 +109,7 @@ plt.scatter(identite,d, label = "Difficulté calculée")
 plt.scatter(identite,y2, label = "Difficulté donnée")
 plt.xlabel("Sudokus")
 plt.ylabel("Difficulté(réel arbitraire)")
-plt.title("Méthode analytique sans coeffs de première utilisation")
+plt.title("Recuit simulé avec coeffs de première utilisation")
 plt.legend()
 plt.show()
 

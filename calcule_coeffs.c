@@ -57,7 +57,7 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
             free(nouveaux_coeffs);
             free(nouveaux_coeffs_first_use);
         }
-        T = T*0.9999 ;
+        T = T*0.99999 ;
 
 		if(i%10000 == 0){
 			printf("i = %d : \n", i);
