@@ -7,7 +7,7 @@
 /*La technique de box line reduction consiste à éliminer des indices sur une lignes ou une colonne car ils sont forcément présents sur cette ligne et dans une autre zone*/
 
 void updateNotes(int** grid, bool*** notes, int row, int col);
-void increase_difficulty(int n);
+
 
 bool boxLineReduction(bool*** notes){
 

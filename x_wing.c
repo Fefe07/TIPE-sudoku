@@ -53,8 +53,6 @@ bool x_wing(bool ***notes){
 								//printf("Technique : x_wing\n");
 								//printf("On retire %d ligne %d et colonnes %d et %d\n", n, i, colonne1[i1], colonne2[i1]);
 								if (trouve == false){
-									
-									//increase_difficulty(10);
 									trouve = true ;
 								}
 							}
@@ -107,8 +105,6 @@ bool x_wing(bool ***notes){
 								//printf("Technique : x_wing\n");
 								//printf("On retire %d lignes %d et %d  et colonne %d\n", n, ligne1[j1], ligne2[j1], j);
 								if (trouve == false){
-									
-									//increase_difficulty(10);
 									trouve = true ;
 								}
 							}

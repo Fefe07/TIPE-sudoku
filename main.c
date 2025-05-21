@@ -63,15 +63,10 @@ typedef struct {
 grid_one_diff lecture_db_B(int n, char *nom_de_la_base);
 grid_one_diff lecture_db_C(int n, char *nom_de_la_base);
 
-typedef struct {
-	int technique;
-	int *positions; // le contenu de ce tableau va varier suivant les fonctions
-} tech_occurence;
 
 int **grid_of_string(char *s);
 
-int difficulty = 0;
-void increase_difficulty(int n) { difficulty += n; }
+
 void updateNotes(int **grid, bool ***notes, int row, int col);
 
 void affiche_notes(bool ***notes);

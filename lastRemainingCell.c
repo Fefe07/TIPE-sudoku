@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int increase_difficulty(int n);
+
 
 bool lastRemainingCell_row(int **grid);
 bool lastRemainingCell_column(int **grid);
@@ -55,9 +55,6 @@ bool lastRemainingCell(int **grid) {
 		if (!ok) {
 			ok = lastRemainingCell_zone(grid);
 		}
-	}
-	if(ok){
-		increase_difficulty(2);
 	}
 	return ok;
 }

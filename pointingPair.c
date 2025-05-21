@@ -7,7 +7,6 @@
 
 
 void updateNotes(int** grid, bool*** notes, int row, int col);
-void increase_difficulty(int n);
 void free_zones(bool*** zones);
 
 bool pointingPair(bool*** notes){

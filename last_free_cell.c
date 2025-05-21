@@ -4,7 +4,7 @@
 # include <stdbool.h>
 #include <time.h>
 
-void increase_difficulty(int n);
+
 void printGrid(int** grid);
 
 void consequences_new_number(int **grid, bool ***notes, int i, int j, float* nb_techniques);
@@ -35,7 +35,6 @@ bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques){ // OK !
                     assert(sum > 0);
                     assert(sum<=9);
                     grid[row][col] = sum ; // sum vaut alors la valeur manquante
-                    //increase_difficulty(1);
                     //printf("Technique : lastFreeCell\n");
                     //printf("row = %d, col = %d, val = %d\n", row, col, grid[row][col]);
                     consequences_new_number(grid, notes, row, col, nb_techniques);
@@ -60,7 +59,6 @@ bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques){ // OK !
                     assert(sum > 0);
                     assert(sum<=9);
                     grid[row][col] = sum ;
-                    //increase_difficulty(1);
                     //printf("Technique : lastFreeCell\n");
                     //printf("row = %d, col = %d, val = %d\n", row, col, grid[row][col]);
                     consequences_new_number(grid, notes, row, col,  nb_techniques);
@@ -92,7 +90,6 @@ bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques){ // OK !
                         assert(sum > 0);
                         assert(sum<=9);
                         grid[3*rowGroup + row] [3*colGroup + col] = sum ;
-                        //increase_difficulty(1);
                         //printf("Technique : lastFreeCell\n");
                         //printf("row = %d, col = %d, val = %d\n", (3*rowGroup + row), (3*colGroup + col), grid[3*rowGroup + row] [3*colGroup + col]);
                         consequences_new_number(grid, notes, 3*rowGroup + row, 3*colGroup + col,  nb_techniques);
@@ -130,7 +127,6 @@ bool lastFreeCell_one_cell(int** grid, bool*** notes, int i, int j, float* nb_te
                 assert(sum > 0);
                 assert(sum<=9);
                 grid[i][col] = sum ; // sum vaut alors la valeur manquante
-                //increase_difficulty(1);
                 //printf("Technique : lastFreeCell_one_cell\n");
                 //printf("row = %d, col = %d, val = %d\n", i, col, grid[i][col]);
                 consequences_new_number(grid, notes, i, col,  nb_techniques);
@@ -153,7 +149,6 @@ bool lastFreeCell_one_cell(int** grid, bool*** notes, int i, int j, float* nb_te
                 assert(sum > 0);
                 assert(sum<=9);
                 grid[row][j] = sum ;
-                //increase_difficulty(1);
                 //printf("Technique : lastFreeCell_one_cell\n");
                 //printf("row = %d, col = %d, val = %d\n", row, j, grid[row][j]);
                 consequences_new_number(grid, notes, row, j, nb_techniques);
@@ -182,7 +177,6 @@ bool lastFreeCell_one_cell(int** grid, bool*** notes, int i, int j, float* nb_te
                     assert(sum > 0);
                     assert(sum<=9);
                     grid[3*rowGroup + row] [3*colGroup + col] = sum ;
-                    //increase_difficulty(1);
                     //printf("Technique : lastFreeCell_one_cell\n");
                     //printf("row = %d, col = %d, val = %d\n", (3*rowGroup + row), (3*colGroup + col), grid[3*rowGroup + row] [3*colGroup + col]);
                     consequences_new_number(grid, notes, 3*rowGroup + row, 3*colGroup + col, nb_techniques);
