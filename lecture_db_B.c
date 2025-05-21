@@ -15,7 +15,7 @@ grid_one_diff lecture_db_B(int n, char* nom_de_la_base){
 	FILE* f ;
 	f = fopen(nom_de_la_base, "r");
 
-	int cap = 2	 ;
+	int cap = 10	 ;
 
 	// on va à la ligne souhaitée
 	int line = 1;

@@ -1,5 +1,5 @@
 /*Fichier pour la lecture de la base de données avec difficultés */
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -22,7 +22,10 @@ grid_diffs lecture_db_diffs(int n, char* nom_de_la_base){
 	while (line < n){
 		c = fgetc(f);
 		if (c == '\n'){
+			
 			line++;
+				
+			
 		}
 	}
 	float d_tr = 42. ; 

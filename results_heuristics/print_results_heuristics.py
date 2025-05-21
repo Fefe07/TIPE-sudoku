@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 np.set_printoptions(threshold=1000000)
 
 ### Lit resultats.txt
-f = open("db_B.txt","r")
+f = open("db_0.txt","r")
 texte = f.read()
 m = np.matrix(texte)
 f.close()

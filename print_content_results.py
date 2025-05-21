@@ -36,7 +36,7 @@ for i in range(p) :
 coeffs_first_use =c
 
 
-n = n
+n = n-1
 
 diff_calculee = (n-2) * [42]
 diff_donnee = (n-2) * [42]
@@ -62,13 +62,17 @@ for i in range(n-2):
 
 
 
+
 #plt.semilogy()
-plt.scatter(identite,diff_calculee,s=40, label="Difficulté calculée")
-plt.scatter(identite,diff_donnee,s=40, label="ln(Difficulté donnée+1)")
-plt.xlabel("Sudokus")
-plt.ylabel("Difficulté(réel arbitraire)")
+#plt.scatter(identite,diff_calculee,s=40, label="Difficulté calculée")
+#plt.scatter(identite,diff_donnee,s=40, label="Difficulté donnée")
+plt.xlabel("Difficulté donnée par la base")
+plt.ylabel("Difficulté calculée")
+plt.scatter(diff_donnee, diff_calculee)
+#plt.errorbar(dc_per_dd, means, std)
+plt.ylabel("Difficulté calculée")
 plt.title("Recuit simulé avec coeffs de première utilisation")
-plt.legend()
+#plt.legend()
 plt.show()
 
 

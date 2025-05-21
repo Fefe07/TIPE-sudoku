@@ -16,13 +16,16 @@ n,p = m.shape
 
 
 ######## Sélectionne les données utiles
-m = np.delete(m,[n-2,n-1],0)
+m = np.delete(m,range(n-2,n),0)
 y = np.delete(m,range(p-1),1)
 m = np.delete(m,p-1,1)
 
 n,p = m.shape
 
+print("n =", n) 
 
+
+""" Ancienne version
 # Supprime les colonnes liés, de telle sorte que m soit de rang maximal
 #print(m)
 j = 0
@@ -40,6 +43,7 @@ for k in range(p) :
 n,p = m.shape
 
 
+
 #### Résout le système
 mt = np.linalg.matrix_transpose(m)
 mtm = mt*m
@@ -47,6 +51,10 @@ mtm = mt*m
 #print(mt*y)
 x = np.linalg.solve(mt*m,mt*y)
 print("x=",x)
+"""
+mt = np.linalg.matrix_transpose(m)
+x = np.linalg.lstsq(mt*m,mt*y)[0]
+print("x = ", x)
 
 # Calcule l'écart-type
 variance = 0
@@ -66,7 +74,7 @@ print("ecart-type = ",np.sqrt(variance))
 dcmoy = np.average(d)
 ddmoy = np.average(y)
 corr = 0
-for i in range(n-2) :
+for i in range(n) :
     corr += (d[i] - dcmoy)*(y[i]-ddmoy) 
 
 corr/= (np.std(y) * np.std(d) * n)
@@ -87,22 +95,40 @@ for i in range(n):
     d[i] = t[i][1]
     y2[i] = t[i][0]
 
+# dc_per_dd = [] 
+# for i in range(10) :
+#     dc_per_dd.append([])
+# means = 10 * [42]
+# std = 10 * [42]
+# for i in range(n):
+#     dc_per_dd[int(y2[i])].append( d[i])
 
+# for i in range(10) :
+#     means[i] = np.average(dc_per_dd[i])
+#     std[i] = np.std(dc_per_dd[i])
+    
 
 
 ### Affichage
 
-plt.scatter(identite,d, label = "Difficulté calculée")
-plt.scatter(identite,y2, label = "Difficulté donnée")
-plt.xlabel("Sudokus")
-plt.ylabel("Difficulté(réel arbitraire)")
-plt.title("Méthode analytique sans coeffs de première utilisation")
-plt.legend()
+# plt.scatter(identite,d, label = "Difficulté calculée")
+# plt.scatter(identite,y2, label = "Difficulté donnée")
+# plt.xlabel("Sudokus")
+# plt.ylabel("Difficulté(réel arbitraire)")
+plt.scatter(y2,d, s = 20)
+#plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
+plt.xlabel("difficulté donnée par la base")
+plt.ylabel("Difficulté calculée")
+plt.title("Méthode analytique")
+# %%
+#plt.legend()
+
 plt.show()
 
 
 
 ########## m2 prend en compte les coeffs constants ###########
+#n = n+10
 m2 = []
 #print(m)
 for i in range(n) :
@@ -113,15 +139,18 @@ for i in range(n) :
             m2[i][j+p] = 1
 # transforme le tableau de tableaux en matrice (c'est pas la mme chose uurg)            
 m2 = np.matrix(m2)
-
+#n= n-10
 
 ## Cette procéudre fait le même travail que les lignes suivantes, je l'ai découverte après
 m2t =np.linalg.matrix_transpose(m2)
-print("x2 = ",np.linalg.lstsq(m2t*m2,m2t*y))
+x2 = np.linalg.lstsq(m2t*m2,m2t*y)[0]
+print("x2 = ",x2)
 
+n,p2 = m2.shape
+""" ancienne version : 
 # Supprime les colonnes liés, de telle sorte que m soit de rang maximal
 j = 0
-n,p2 = m2.shape
+
 
 for k in range(p2) :
     if np.linalg.matrix_rank(np.delete(m2, range(j+1,p2),1)) == j+1 :
@@ -141,7 +170,7 @@ m2t = np.linalg.matrix_transpose(m2)
 x2 = np.linalg.solve(m2t*m2,m2t*y)
 print("x2 = ",x2)
 
-
+"""
 
 
 cout = 0
@@ -176,13 +205,29 @@ t.sort()
 for i in range(n):
     d[i] = t[i][1]
     y2[i] = t[i][0]
+    
+# dc_per_dd = [] 
+# for i in range(10) :
+#     dc_per_dd.append([])
+# means = 10 * [42]
+# std = 10 * [42]
+# for i in range(n-2):
+#     dc_per_dd[int(y2[i])].append( d[i])
 
-plt.scatter(identite,d, label = "Difficulté calculée")
-plt.scatter(identite,y2, label = "Difficulté donnée")
-plt.xlabel("Sudokus")
-plt.ylabel("Difficulté(réel arbitraire)")
-plt.title("Méthode analytique avec coeffs de première utilisation")
-plt.legend()
+# for i in range(10) :
+#     means[i] = np.average(dc_per_dd[i])
+#     std[i] = np.std(dc_per_dd[i])
+    
+
+#plt.scatter(identite,d, label = "Difficulté calculée")
+#plt.scatter(identite,y2, label = "Difficulté donnée")
+
+plt.scatter(y2,d, s = 20, label = "")
+#plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
+plt.xlabel("Difficulté donnée par la base")
+plt.ylabel("Difficulté calculée")
+plt.title("Méthode analytique - coefficients de première utilisation")
+#plt.legend()
 plt.show()
 
 

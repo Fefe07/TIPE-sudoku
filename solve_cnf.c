@@ -136,38 +136,42 @@ bool egal_vars(var v1, var v2){
 }
 
 
+void ls_print(lit_set ls){
+    if(ls!=NULL){
+        printf("i = %d, j = %d, k = %d, b = %d\n", ls->v.i, ls->v.j, ls->v.k, ls->positif);
+        ls_print(ls->next);
+    }
+}
+
 bool ls_mem(var v, bool b, lit_set ls){ //ok
     return ((ls!=NULL)&&((egal_vars(v,ls->v) && b == ls->positif)|| ls_mem(v, b,ls->next)));
 }
 
-lit_set ls_union(lit_set ls1, lit_set ls2){
+void ls_union(lit_set ls1, lit_set ls2){
     /* Fait l'union de ls1 et ls2 */
-    /* *ls1 n'est pas modifié pour contenit cette union */
+    /* *ls1 est modifié pour contenir cette union */
     /* ls2 n'est pas libéré ni altéré */
+    printf("Union\n");
     if(ls2!=NULL){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
-            return ls_union(ls1, ls2->next);
+            ls_union(ls1, ls2->next);
         }
         else{
+            printf("ls1 =  ");
+            ls_print(ls1);
+            
+
             lit_set ls = malloc(sizeof(struct lit_set_s));
             assert(ls!=NULL);
-            ls->v = ls2->v ;
-            ls->positif =  ls2->positif ;
-            ls->next = ls_union(ls1, ls2->next);
-            return ls ;
-        }
-    }
-    else{
-        if(ls1!=NULL){
-            lit_set ls = malloc(sizeof(struct lit_set_s));
-            assert(ls!=NULL);
-            ls->v = ls1->v ;
-            ls->positif =  ls1->positif ;
-            ls->next = ls_union(ls1->next, NULL);
-            return ls ;
-        }
-        else{
-            return NULL ;
+            *ls = *ls1 ;
+            ls1->next = ls ;
+            ls1->positif = ls2->positif;
+            ls1->v = ls2->v ;
+
+            printf("ls1 =  ");
+            ls_print(ls1);
+            ls_union(ls1, ls2->next);
+            
         }
     }
 }
@@ -181,12 +185,7 @@ lit_set ls_singleton(var v, bool positif){
     return ls ;
 }
 
-void ls_print(lit_set ls){
-    if(ls!=NULL){
-        printf("i = %d, j = %d, k = %d, b = %d\n", ls->v.i, ls->v.j, ls->v.k, ls->positif);
-        ls_print(ls->next);
-    }
-}
+
 
 void ls_free(lit_set ls){
     if(ls!=NULL){
@@ -202,14 +201,14 @@ bool ls_is_empty(lit_set ls){
 
 lit_set ls_inter(lit_set ls1, lit_set ls2){
     /* Fait l'intersection de ls1 et ls2 */
+    printf("Inter\n");
     if(ls2!=NULL){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
             lit_set sing = ls_singleton(ls2->v, ls2->positif);
             lit_set inter = ls_inter(ls1,ls2->next);
-            lit_set ls = ls_union(sing, inter);
-            ls_free(inter);
+            ls_union(inter,sing);
             ls_free(sing);
-            return ls ;
+            return inter ;
         }
         else{
             return ls_inter(ls1,ls2->next);
@@ -380,7 +379,7 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
     /* Renvoie l'ensemble des litéraux communes (qui sont donc nécéssairement vrais)*/
 
     //printf("Disjonction !\n");
-    if(profondeur<3){
+    if(profondeur<30){
         printf("profondeur = %d,  m = %d\n",profondeur, f->m);
     }
     nb_disjonctions[profondeur]++;
@@ -433,9 +432,9 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                     finished_quine_t = true ;
                 }
                 else{
-                    lit_set temp = modified_t ;
-                    modified_t = ls_union(modified_t, *found);
-                    ls_free(temp);
+                    printf("Coucou\n");
+                    ls_union(modified_t, *found);
+                    printf("Coucou\n");
                     ls_free(*found);
                     free(found);
                 }
@@ -445,9 +444,18 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
                 /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
                 //printf("La formule est insatisfiable d'après Quine\n");
-                lit_set temp = modified_t ;
-                modified_t = ls_union(modified_t, modified_f);
-                ls_free(temp);
+                printf("Coucou2\n");
+                assert(modified_f!=NULL);
+                printf("modified_t = \n");
+                ls_print(modified_t);
+                printf("modified_f = \n");
+                ls_print(modified_f);
+                ls_union(modified_t, modified_f);
+                printf("modified_t = \n");
+                ls_print(modified_t);
+                printf("modified_f = \n");
+                ls_print(modified_f);
+                assert(ls_inter(modified_f,modified_t)!=NULL);
             }
         }
         else if(!finished_quine_f){
@@ -472,9 +480,9 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                     finished_quine_f = true ;
                 }
                 else{
-                    lit_set temp = modified_f ;
-                    modified_f = ls_union(modified_f, *found);
-                    ls_free(temp);
+                    printf("Coucou3\n");
+                    ls_union(modified_f, *found);
+                    
                     ls_free(*found);
                     free(found);
                 }
@@ -484,9 +492,9 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
                 /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
                 //printf("La formule est insatisfiable d'après Quine\n");
-                lit_set temp = modified_f ;
-                modified_f = ls_union(modified_f, modified_t);
-                ls_free(temp);
+                printf("Coucou4\n");
+                ls_union(modified_f, modified_t);
+                
             }
                 
             
@@ -500,10 +508,10 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 //ls_print(ls);
                 if(!ls_is_empty(ls)){
                     //printf("ls est non vide\n");
-                    lit_set temp = modified_t ;
-                    modified_t = ls_union(modified_t, ls);
+                    printf("Coucou5\n");
+                    ls_union(modified_t, ls);
                     ls_free(ls);
-                    ls_free(temp);
+                    
                 }
                 else{
                     /* Alors f est nécéssairement insatisfiable*/
@@ -524,10 +532,10 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 //ls_print(ls);
                 if(!ls_is_empty(ls)){
                     //printf("ls est non vide\n");
-                    lit_set temp = modified_f ;
-                    modified_f = ls_union(modified_f, ls);
+                    printf("Coucou6\n");
+                    ls_union(modified_f, ls);
                     ls_free(ls);
-                    ls_free(temp);
+                    
                 }
                 else{
                     /* Alors f est nécéssairement insatisfiable*/

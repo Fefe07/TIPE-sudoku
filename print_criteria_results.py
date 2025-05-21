@@ -49,13 +49,26 @@ for i in range(n):
     diff_donnee[i] = t[i][0]    
     diff_calculee[i] = t[i][1]
     density[i] = t[i][2]
-    nombre_indices[i] = t[i][3] 
-    nb_notes[i] = t[i][4] /25
+    nombre_indices[i] = int( t[i][3]) 
+    nb_notes[i] = t[i][4]
     repartition[i] = t[i][5] 
     repartition_valeurs[i] = t[i][6]
     mix[i] = -1.*repartition_valeurs[i] + 1.5*repartition[i]  - 0.8*nombre_indices[i] + 20  # + nb_notes[i] /75
 
 
+
+diff_per_ni = [] 
+for i in range(9) :
+    diff_per_ni.append([])
+means = 9 * [42]
+std = 9 * [42]
+for i in range(n):
+    diff_per_ni[nombre_indices[i]-24].append( diff_donnee[i])
+
+for i in range(9) :
+    means[i] = np.average(diff_per_ni[i])
+    std[i] = np.std(diff_per_ni[i])
+    
 
 
 
@@ -65,17 +78,19 @@ identite = range(n)
 
 #plt.semilogy()
 #plt.scatter(identite,diff_calculee, label="Difficulté calculée")
-plt.scatter(identite, diff_donnee, s=20, label="Difficulté donnée")
+#plt.scatter(identite, diff_donnee, s=20, label="Difficulté donnée")
 #plt.scatter(identite, density,s=20, label="Densité")
-#plt.scatter(identite, nombre_indices, s=20, label="Nombre d'indices")
-plt.scatter(identite, nb_notes, s=20, label="Nombre de notes/25")
-#plt.scatter(identite, repartition, s=20, label="Répartition géographique")
-#plt.scatter(identite, repartition_valeurs, s=20, label="Répartition des valeurs")
+#plt.scatter(nombre_indices, diff_donnee, s=20, label="Difficulté donnée")
+#plt.scatter(range(24,33), means, s = 60,label = "Difficulté moyenne")
+#plt.errorbar(range(24,33), means, std, linestyle='None', marker ='s', mfc = 'orange', mec = "orange", ecolor = "orange", label = "Moyennes et écarts-types")
+plt.scatter(diff_donnee, nb_notes, s=20, label="Nombre de candidats")
+#plt.scatter(diff_donnee, repartition, s=20, label="Répartition géographique")
+#plt.scatter(diff_donnee, repartition_valeurs, s=20, label="Répartition des valeurs")
 #plt.scatter(identite, mix, s=20, label ="Mix")
-plt.xlabel("Sudokus")
-plt.ylabel("Difficulté(réel arbitraire) / mix(réel)")
+plt.ylabel("Nombre de candidats")
+plt.xlabel("Nombre de chiffres donnés")
 #plt.title("Recuit simulé avec coeffs de première utilisation")
-plt.legend()
+#plt.legend()
 plt.show()
 
 
