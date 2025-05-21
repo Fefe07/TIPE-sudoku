@@ -1,8 +1,5 @@
 #include <assert.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
 /*La technique de box line reduction consiste à éliminer des indices sur une lignes ou une colonne car ils sont forcément présents sur cette ligne et dans une autre zone*/
 

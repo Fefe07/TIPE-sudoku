@@ -22,6 +22,11 @@ m = np.delete(m,p-1,1)
 
 n,p = m.shape
 
+
+
+for i in range(n):
+    y[i]+=1
+
 print("n =", n) 
 
 
@@ -120,7 +125,7 @@ plt.scatter(y2,d, s = 20)
 plt.xlabel("difficulté donnée par la base")
 plt.ylabel("Difficulté calculée")
 plt.title("Méthode analytique")
-# %%
+
 #plt.legend()
 
 plt.show()

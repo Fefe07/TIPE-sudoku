@@ -223,7 +223,7 @@ int main() {
 	float *coeffs = cree_coeffs();
 	float *coeffs_first_use = cree_coeffs_first_use();
 
-	int results_size = 344	;
+	int results_size = 5000	;
 	FILE *f = fopen("resultats.txt", "w");
 
 
@@ -236,11 +236,11 @@ int main() {
 		if(nbGrille%100 == 0){
 			printf("Grille n %d\n", nbGrille);
 		}
-		grid_diffs g = lecture_db_diffs(nbGrille+2, "grilles/Base_de_donnees_evaluees.csv");
+		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
 		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
 		//printGrid(g.grid);
-		difficulties[nbGrille] = (float) g.D_TR;
+		difficulties[nbGrille] = (float) g.difficulty+1;
 		float *nb_tech = malloc(13 * sizeof(float));
 		for (int i = 0; i < 13; i++) {
 			nb_tech[i] = 0.;
