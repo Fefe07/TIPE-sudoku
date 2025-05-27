@@ -1,17 +1,24 @@
 # include <assert.h>
 # include <stdbool.h>
+#include <stdio.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
 
 void printGrid(int** grid);
 
-void consequences_new_number(int **grid, bool ***notes, int i, int j, float* nb_techniques);
+//void consequences_new_number(int **grid, bool ***notes, int i, int j, float* nb_techniques);
 bool est_ok(int** grid);
 
-bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques){ // OK !
+bool lastFreeCell(grid_t g){ // OK !
     // Entrée : une grille ( tableau de 9*9 entiers)
     // Sortie : la grille modifiée sur une unique case si c'est possible avec cette technique et true , false sinon
     // Technique du LastFreeCell : si une zone possède déjà 8 indices, remplit le 9ème
-    if(!est_ok(grid)){
+    if(!est_ok(g->grid)){
         return false;
     }
     
@@ -21,20 +28,20 @@ bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques){ // OK !
         sum = 45 ;
         counter = 0; // compte les indices présents
         for(int col = 0; col<9; col ++){
-            if (grid[row][col] != 0){
+            if (g->grid[row][col] != 0){
                 counter ++ ;
-                sum -= grid[row][col];
+                sum -= g->grid[row][col];
             }
         }
         if (counter==8){ // si 8 cases sont pleines :
             for (int col = 0; col<9; col ++ ){ // recherche l'emplacement libre 
-                if(grid[row][col] == 0){ 
+                if(g->grid[row][col] == 0){ 
                     assert(sum > 0);
                     assert(sum<=9);
-                    grid[row][col] = sum ; // sum vaut alors la valeur manquante
+                    g->grid[row][col] = sum ; // sum vaut alors la valeur manquante
                     //printf("Technique : lastFreeCell\n");
-                    //printf("row = %d, col = %d, val = %d\n", row, col, grid[row][col]);
-                    consequences_new_number(grid, notes, row, col, nb_techniques);
+                    //printf("row = %d, col = %d, val = %d\n", row, col, g->grid[row][col]);
+                    //consequences_new_number(grid, notes, row, col, nb_techniques);
                     return true;
                 }
             }
@@ -45,20 +52,20 @@ bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques){ // OK !
         sum = 45 ;
         counter = 0;
         for(int row = 0; row<9; row ++){
-            if (grid[row][col] != 0){
+            if (g->grid[row][col] != 0){
                 counter ++ ;
-                sum -= grid[row][col];
+                sum -= g->grid[row][col];
             }
         }
         if (counter==8){
             for (int row = 0; row<9; row ++ ){
-                if(grid[row][col] == 0){
+                if(g->grid[row][col] == 0){
                     assert(sum > 0);
                     assert(sum<=9);
-                    grid[row][col] = sum ;
+                    g->grid[row][col] = sum ;
                     //printf("Technique : lastFreeCell\n");
-                    //printf("row = %d, col = %d, val = %d\n", row, col, grid[row][col]);
-                    consequences_new_number(grid, notes, row, col,  nb_techniques);
+                    //printf("row = %d, col = %d, val = %d\n", row, col, g->grid[row][col]);
+                    //consequences_new_number(g->grid, g->notes, row, col,  g->nb_techniques);
                     return true;
                 }
             }
@@ -74,22 +81,22 @@ bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques){ // OK !
         rowGroup = group / 3 ;
         for(int row = 0; row <3; row++){
             for(int col = 0; col < 3; col++){
-                if (grid[3*rowGroup + row] [3*colGroup + col] != 0){
+                if (g->grid[3*rowGroup + row] [3*colGroup + col] != 0){
                     counter ++ ;
-                    sum -= grid[3*rowGroup + row] [3*colGroup + col];
+                    sum -= g->grid[3*rowGroup + row] [3*colGroup + col];
                 }
             }
         }
         if (counter==8){
             for(int row = 0; row <3; row ++){
                 for(int col = 0; col <3; col ++){
-                    if (grid[3*rowGroup + row] [3*colGroup + col] == 0){
+                    if (g->grid[3*rowGroup + row] [3*colGroup + col] == 0){
                         assert(sum > 0);
                         assert(sum<=9);
-                        grid[3*rowGroup + row] [3*colGroup + col] = sum ;
+                        g->grid[3*rowGroup + row] [3*colGroup + col] = sum ;
                         //printf("Technique : lastFreeCell\n");
-                        //printf("row = %d, col = %d, val = %d\n", (3*rowGroup + row), (3*colGroup + col), grid[3*rowGroup + row] [3*colGroup + col]);
-                        consequences_new_number(grid, notes, 3*rowGroup + row, 3*colGroup + col,  nb_techniques);
+                        //printf("row = %d, col = %d, val = %d\n", (3*rowGroup + row), (3*colGroup + col), g->grid[3*rowGroup + row] [3*colGroup + col]);
+                        //consequences_new_number(g->grid, g->notes, 3*rowGroup + row, 3*colGroup + col,  g->nb_techniques);
                         return true ;
                     }
                 }
@@ -100,10 +107,10 @@ bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques){ // OK !
     return false ;
 }
 
-bool lastFreeCell_one_cell(int** grid, bool*** notes, int i, int j, float* nb_techniques){
+bool lastFreeCell_one_cell(grid_t g, int i, int j){
     //printf("LastFreeCell_one_cell\n");
     //printf("i = %d, j = %d\n", i, j);
-    if(!est_ok(grid)){
+    if(!est_ok(g->grid)){
         return false;
     }
     
@@ -113,20 +120,20 @@ bool lastFreeCell_one_cell(int** grid, bool*** notes, int i, int j, float* nb_te
     sum = 45 ;
     counter = 0; // compte les indices présents
     for(int col = 0; col<9; col ++){
-        if (grid[i][col] != 0){
+        if (g->grid[i][col] != 0){
             counter ++ ;
-            sum -= grid[i][col];
+            sum -= g->grid[i][col];
         }
     }
     if (counter==8){ // si 8 cases sont pleines :
         for (int col = 0; col<9; col ++ ){ // recherche l'emplacement libre 
-            if(grid[i][col] == 0){ 
+            if(g->grid[i][col] == 0){ 
                 assert(sum > 0);
                 assert(sum<=9);
-                grid[i][col] = sum ; // sum vaut alors la valeur manquante
+                g->grid[i][col] = sum ; // sum vaut alors la valeur manquante
                 //printf("Technique : lastFreeCell_one_cell\n");
-                //printf("row = %d, col = %d, val = %d\n", i, col, grid[i][col]);
-                consequences_new_number(grid, notes, i, col,  nb_techniques);
+                //printf("row = %d, col = %d, val = %d\n", i, col, g->grid[i][col]);
+                //consequences_new_number(grid, notes, i, col,  nb_techniques);
                 return true;
             }
         }
@@ -135,20 +142,20 @@ bool lastFreeCell_one_cell(int** grid, bool*** notes, int i, int j, float* nb_te
     sum = 45 ;
     counter = 0;
     for(int row = 0; row<9; row ++){
-        if (grid[row][j] != 0){
+        if (g->grid[row][j] != 0){
             counter ++ ;
-            sum -= grid[row][j];
+            sum -= g->grid[row][j];
         }
     }
     if (counter==8){
         for (int row = 0; row<9; row ++ ){
-            if(grid[row][j] == 0){
+            if(g->grid[row][j] == 0){
                 assert(sum > 0);
                 assert(sum<=9);
-                grid[row][j] = sum ;
+                g->grid[row][j] = sum ;
                 //printf("Technique : lastFreeCell_one_cell\n");
-                //printf("row = %d, col = %d, val = %d\n", row, j, grid[row][j]);
-                consequences_new_number(grid, notes, row, j, nb_techniques);
+                //printf("row = %d, col = %d, val = %d\n", row, j, g->grid[row][j]);
+                //consequences_new_number(grid, notes, row, j, nb_techniques);
                 return true;
             }
         }
@@ -161,22 +168,22 @@ bool lastFreeCell_one_cell(int** grid, bool*** notes, int i, int j, float* nb_te
     int rowGroup = j /3 ;
     for(int row = 0; row <3; row++){
         for(int col = 0; col < 3; col++){
-            if (grid[3*rowGroup + row] [3*colGroup + col] != 0){
+            if (g->grid[3*rowGroup + row] [3*colGroup + col] != 0){
                 counter ++ ;
-                sum -= grid[3*rowGroup + row] [3*colGroup + col];
+                sum -= g->grid[3*rowGroup + row] [3*colGroup + col];
             }
         }
     }
     if (counter==8){
         for(int row = 0; row <3; row ++){
             for(int col = 0; col <3; col ++){
-                if (grid[3*rowGroup + row] [3*colGroup + col] == 0){
+                if (g->grid[3*rowGroup + row] [3*colGroup + col] == 0){
                     assert(sum > 0);
                     assert(sum<=9);
-                    grid[3*rowGroup + row] [3*colGroup + col] = sum ;
+                    g->grid[3*rowGroup + row] [3*colGroup + col] = sum ;
                     //printf("Technique : lastFreeCell_one_cell\n");
-                    //printf("row = %d, col = %d, val = %d\n", (3*rowGroup + row), (3*colGroup + col), grid[3*rowGroup + row] [3*colGroup + col]);
-                    consequences_new_number(grid, notes, 3*rowGroup + row, 3*colGroup + col, nb_techniques);
+                    //printf("row = %d, col = %d, val = %d\n", (3*rowGroup + row), (3*colGroup + col), g->grid[3*rowGroup + row] [3*colGroup + col]);
+                    //consequences_new_number(grid, notes, 3*rowGroup + row, 3*colGroup + col, nb_techniques);
                     return true ;
                 }
             }

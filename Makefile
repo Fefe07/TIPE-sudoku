@@ -2,7 +2,7 @@ all: main
 	./main
 	
 CC = gcc
-CFLAGS = -lm -g -pg
+CFLAGS = -lm -g -pg -fsanitize=address
 
 SRCS = $(wildcard *.c)
 HEADERS = $(wildcard *.h)

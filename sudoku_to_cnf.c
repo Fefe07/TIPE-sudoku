@@ -49,27 +49,27 @@ void free_clause_1in9(clause_1in9 c){
 }
 
 void print_var(var v){
-    printf("i = %d, j = %d, k = %d\n", v.i, v.j, v.k);
+    //printf("i = %d, j = %d, k = %d\n", v.i, v.j, v.k);
 }
 
 void print_clause(clause c){
     for(int b = 0; b<c.nb_lit;b++){
             if(c.positif[b]){
-                printf("x_%d,%d,%d ", c.vars[b].i, c.vars[b].j, c.vars[b].k);
+                //printf("x_%d,%d,%d ", c.vars[b].i, c.vars[b].j, c.vars[b].k);
             }
             else{
-                printf("not x_%d,%d,%d ", c.vars[b].i, c.vars[b].j, c.vars[b].k);
+                //printf("not x_%d,%d,%d ", c.vars[b].i, c.vars[b].j, c.vars[b].k);
             }
             if(b<c.nb_lit-1){
-                printf("or ");
+                //printf("or ");
             }
         }
-    printf("\n");
+    //printf("\n");
 }
 
 void print_k_cnf(k_cnf f){
-    printf("m = %d\n",f->m);
-    printf("k = %d\n", f->k);
+    //printf("m = %d\n",f->m);
+    //printf("k = %d\n", f->k);
     for(int a = 0; a<f->m; a++){
         print_clause(f->clauses[a]);
     }
@@ -107,7 +107,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 filtre[k] = true;
                 var v = {.i = i, .j=j, .k=k};
                 vars[k] = v;
-                //print_var(vars[k]);
+                print_var(vars[k]);
             }
             clause_1in9 c = {.nb_var = 9, .vars = vars, .filtre = filtre};
             clauses_1in9[9*i+j] = c;
@@ -125,7 +125,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 filtre[j] = true;
                 var v = {.i = i, .j=j, .k=k};
                 vars[j] = v;
-                //print_var(vars[j]);
+                print_var(vars[j]);
             }
             clause_1in9 c = {.nb_var = 9, .vars = vars, .filtre = filtre};
             clauses_1in9[81 + 9*i+k] = c;
@@ -143,7 +143,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 filtre[i] = true;
                 var v = {.i = i, .j=j, .k=k};
                 vars[i] = v;
-                //print_var(vars[i]);
+                print_var(vars[i]);
             }
             clause_1in9 c = {.nb_var = 9, .vars = vars, .filtre = filtre};
             clauses_1in9[162 + 9*j+k] = c;
@@ -161,7 +161,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 filtre[c] = true;
                 var v = {.i = 3*(z/3)+c/3, .j=3*(z%3)+c%3, .k=k};
                 vars[c] = v;
-                //print_var(vars[c]);
+                print_var(vars[c]);
             }
             clause_1in9 cl = {.nb_var = 9, .vars = vars, .filtre = filtre};
             clauses_1in9[243 + 9*z+k] = cl;
@@ -253,7 +253,7 @@ k_cnf sudoku_to_cnf(int** grid){
                 for(int b = 0; b<9; b++){
                     if(clauses_1in9[a].filtre[b]){
                         vars[i] = clauses_1in9[a].vars[b] ;
-                        //print_var(vars[i]);
+                        print_var(vars[i]);
                         positif[i] = true ;
                         i++ ;
                     }
@@ -307,6 +307,6 @@ k_cnf sudoku_to_cnf(int** grid){
     f->k = 9;
     f->clauses = clauses_redimensionne ;
 
-    //print_k_cnf(f);
+    print_k_cnf(f);
     return f; 
 }

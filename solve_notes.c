@@ -1,20 +1,27 @@
 #include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
 
-bool lastFreeCell(int** grid, bool ***notes, float* nb_techniques);
-bool hiddenSingle(int **grid, bool ***notes, float* nb_techniques);
-bool nakedSingle(int **grid, bool ***notes, float* nb_techniques);
+bool lastFreeCell(grid_t g);
+int hiddenSingle(grid_t g);
+bool nakedSingle(grid_t g);
 
-bool nakedPair(bool ***notes);
-bool nakedTriple(bool ***notes);
-bool hiddenPair(bool ***notes);
-bool hiddenTriple(bool ***notes);
-bool pointingPair(bool ***notes);
-bool boxLineReduction(bool ***notes);
-bool x_wing(bool ***notes);
-bool y_wing(bool ***notes);
-bool swordfish(bool ***notes);
+bool nakedPair(grid_t g);
+bool nakedTriple(grid_t g);
+bool hiddenPair(grid_t g);
+bool hiddenTriple(grid_t g);
+bool pointingPair(grid_t g);
+bool boxLineReduction(grid_t g);
+bool x_wing(grid_t g);
+bool y_wing(grid_t g);
+bool swordfish(grid_t g);
 
 void printGrid(int **grid);
 void print_tab_float(float *tab, int size);
@@ -70,124 +77,140 @@ bool est_ok(int** grid){
 }
 
 
-bool solve_notes(int **grid, bool ***notes, float* nb_techniques) {
+bool solve_notes(grid_t g /* , bool(**techniques)(int** grid, bool*** notes), int n*/) {
 
-  bool ok = true;
   
+  
+  /* techniques est un tableau de pointeurs de fonctions, qui sont les techniques de résolution (hors backtracking) */
+  /* n est le nombre d'éléments de techniques */
+
+  bool ok = true ;
+
+  // int i = 0 ;
+  // while(i<n){
+  //   if((*(techniques[i]))(grid, notes)){
+  //     nb_techniques[i] ++ ;
+  //     i = 0;
+  //   }
+  //   else{
+  //     i++;
+  //   }
+  // }
+  
+
   // teste successivement les techniques, dans l'ordre croissant des difficultés
   while (ok) {
-    if(!est_ok(grid)){
+    if(!est_ok(g->grid)){
       return false;
     }
     // easy
     //printf("SolveNotes\n");
-    ok = lastFreeCell(grid, notes, nb_techniques);
+    ok = lastFreeCell(g);
     //ok = false ;
     if(!ok){
-      int nb_pos = hiddenSingle(grid, notes, nb_techniques);
+      int nb_pos = hiddenSingle(g);
       ok = (nb_pos >= 1);
       if (!ok) {
-        ok = nakedSingle(grid, notes, nb_techniques);
+        ok = nakedSingle(g);
         if (!ok) {
           // medium
            
-          ok = nakedPair(notes);
+          ok = nakedPair(g);
           if (!ok) {
-            // printf("coucou4\n");
+            //printf("coucou4\n");
             // fflush(stdout);
-            ok = nakedTriple(notes);
+            ok = nakedTriple(g);
             
             if (!ok) {
-              // printf("coucou5\n");
+              //printf("coucou5\n");
               // fflush(stdout);
               
-              ok = pointingPair(notes);
+              ok = pointingPair(g);
               
               if (!ok) {
-                // printf("coucou6\n");
+                //printf("coucou6\n");
                 // fflush(stdout);
                 
-                ok = boxLineReduction(notes);
+                ok = boxLineReduction(g);
                 
                 if (!ok) {
-                  // printf("coucou7\n");
+                  //printf("coucou7\n");
                   // fflush(stdout);
-                  ok = hiddenPair(notes);
+                  ok = hiddenPair(g);
                   if (!ok) {
-                    // printf("coucou8\n");
+                    //printf("coucou8\n");
                     // fflush(stdout);
-                    ok = hiddenTriple(notes);
+                    ok = hiddenTriple(g);
                     if (!ok) {
-                      // printf("coucou9\n");
+                      //printf("coucou9\n");
                       // fflush(stdout);
-                      ok = x_wing(notes);
-                      // printf("coucou10\n");
+                      ok = x_wing(g);
+                      // //printf("coucou10\n");
                       // fflush(stdout);
                       if(!ok){
-                        ok = y_wing(notes);
+                        ok = y_wing(g);
                         if(!ok){
-                          ok = swordfish(notes);
+                          ok = swordfish(g);
                           if(ok){
-                            nb_techniques[11] ++ ;
+                            g->nb_techniques[11] ++ ;
                           }
                         }
                         else{
-                          nb_techniques[10] ++ ;
+                          g->nb_techniques[10] ++ ;
                         }
                       }
                       else{
-                        nb_techniques[9]++ ;
+                        g->nb_techniques[9]++ ;
                       }
                     }
                     else {
-                      nb_techniques[8]++;
+                      g->nb_techniques[8]++;
                     }
                   } else {
-                    nb_techniques[7]++;
+                    g->nb_techniques[7]++;
                   }
                 } else {
-                  nb_techniques[6]++;
+                  g->nb_techniques[6]++;
                 }
               } else {
-                nb_techniques[5]++;
+                g->nb_techniques[5]++;
               }
             } else {
-              nb_techniques[4]++;
+              g->nb_techniques[4]++;
             }
           } else {
-            nb_techniques[3]++;
+            g->nb_techniques[3]++;
           }
         } else {
-          nb_techniques[1]++;
+          g->nb_techniques[1]++;
         }
       } else {
         /* Le décalage d'indices vient d'une revue de l'aordre de difficulté des techniques */
-        nb_techniques[2]+= nb_pos/9.;
+        g->nb_techniques[2]+= nb_pos/9.;
       }
     }
     else{
-      nb_techniques[0]++;
+      g->nb_techniques[0]++;
       
       
     }
   }
   // print_tab(nb_techniques,10);
   //  renvoie true si la grille est finie, false sinon
-  // printf("coucou42\n");
+  // //printf("coucou42\n");
   // fflush(stdout);
 
   bool finished  = true ;
-  for(int i = 0; i<9; i++){
-    for(int j = 0; j<9; j++){
-      if(grid[i][j] == 0){
-        finished = false;
-        
-      }
+  for(int c = 0; c<81; c++){
+    if(g->grid[c/9][c%9] == 0){
+      finished = false;
+      break ;
     }
   }
+
   if(!finished){
     //printf("SolveNotes pas fini\n");
-    //printGrid(grid);
+    printGrid(g->grid);
   }
   
   return finished ;

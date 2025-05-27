@@ -4,7 +4,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
 
 bool lastRemainingCell_row(int **grid);
 bool lastRemainingCell_column(int **grid);
@@ -46,14 +51,14 @@ bool verif_zone(int valeur, int **grille, int row_zone, int col_zone){
 
 
 // on réunit les trois
-bool lastRemainingCell(int **grid) {
+bool lastRemainingCell(grid_t g) {
 
 	bool ok = false;
-	ok = lastRemainingCell_column(grid);
+	ok = lastRemainingCell_column(g->grid);
 	if (!ok) {
-		ok = lastRemainingCell_row(grid);
+		ok = lastRemainingCell_row(g->grid);
 		if (!ok) {
-			ok = lastRemainingCell_zone(grid);
+			ok = lastRemainingCell_zone(g->grid);
 		}
 	}
 	return ok;

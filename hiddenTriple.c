@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
+
 /*Fonction globale hidden triple
 Entrée : une grille de note
 Sortie : booléen (true si un nouveau triplet caché a été trouvé, false sinon)
@@ -20,18 +27,18 @@ void free_zones(bool*** zones){
   free(zones);
 }
 
-bool hiddenTriple(bool ***notes) {
+bool hiddenTriple(grid_t g) {
   //printf("Coucou from hiddenTriple\n");
   bool ok;
   //printf("On lance sur les lignes\n");
-  ok = hiddenTriple_line(notes);
+  ok = hiddenTriple_line(g->notes);
   if (!ok) {
     //printf("On lance sur les colonnes\n");
-    ok = hiddenTriple_column(notes);
+    ok = hiddenTriple_column(g->notes);
   }
   if (!ok) {
     //printf("On lance sur les zones\n");
-    ok = hiddenTriple_zone(notes);
+    ok = hiddenTriple_zone(g->notes);
   }
   return ok;
 }

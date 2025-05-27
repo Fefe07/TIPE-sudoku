@@ -4,12 +4,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
 
-
-void updateNotes(int** grid, bool*** notes, int row, int col);
+void updateNotes(grid_t g, int row, int col);
 void free_zones(bool*** zones);
 
-bool pointingPair(bool*** notes){
+bool pointingPair(grid_t g){
 	
 	// conversion de la grille en zones
 	bool ***zones = malloc(9 * sizeof(bool **));
@@ -21,7 +26,7 @@ bool pointingPair(bool*** notes){
 		zones[z] = malloc(9 * sizeof(bool **));
 		assert(zones[z] != NULL);
 		for (int c = 0; c < 9; c++) {
-			zones[z][c] = notes[3 * (z / 3) + c / 3][3 * (z % 3) + c % 3] ;
+			zones[z][c] = g->notes[3 * (z / 3) + c / 3][3 * (z % 3) + c % 3] ;
 		}
 	}
 	
@@ -48,8 +53,8 @@ bool pointingPair(bool*** notes){
 				assert(line!=-1);
 				bool verif = false;
 				for(int j=0; j<9;j++){
-					if((j<3*(z%3) || j > 3*(z%3)+2) && notes[3*(z/3) + line][j][value]){
-						notes[3*(z/3) + line][j][value] = false;
+					if((j<3*(z%3) || j > 3*(z%3)+2) && g->notes[3*(z/3) + line][j][value]){
+						g->notes[3*(z/3) + line][j][value] = false;
 						verif = true ;
 					}
 				}
@@ -79,8 +84,8 @@ bool pointingPair(bool*** notes){
 				assert(column!=-1);
 				bool verif = false ;
 				for(int i=0; i<9;i++){
-					if((i<3*(z/3) || i > 3*(z/3)+2) && notes[i][3*(z%3)+column][value]){
-						notes[i][3*(z%3)+column][value] = false;
+					if((i<3*(z/3) || i > 3*(z/3)+2) && g->notes[i][3*(z%3)+column][value]){
+						g->notes[i][3*(z%3)+column][value] = false;
 						verif = true ;
 					}
 				}

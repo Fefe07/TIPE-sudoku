@@ -43,12 +43,12 @@ void printGrid(int** grid);
 void print_k_cnf(k_cnf f);
 
 float assess_cnf(int** grid){
-    //printGrid(grid);
+    printGrid(grid);
     k_cnf f = sudoku_to_cnf(grid);
     // on compte les variables
     int n = 0;
     int m = f->m ;
-    //print_k_cnf(f);
+    print_k_cnf(f);
     bool*** existing_variables = malloc(9*sizeof(bool**));
     assert(existing_variables!=NULL);
     for(int i = 0; i<9; i++){

@@ -1,10 +1,14 @@
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
 
-
-bool x_wing(bool ***notes){
+bool x_wing(grid_t g){
 	bool trouve = false ;
 
 	
@@ -23,7 +27,7 @@ bool x_wing(bool ***notes){
 			// on parcourt la ligne choisie
 			for(int j = 0; j<9; j++){
 				// si la case ij peut accueillir n (Attention au décalage d'indices !)
-				if (notes[i][j][n-1]){
+				if (g->notes[i][j][n-1]){
 					countl[i] ++ ;
 					if(colonne1[i]==(-1)){
 						colonne1[i] = j;
@@ -47,9 +51,9 @@ bool x_wing(bool ***notes){
 					if((colonne1[i1] == colonne1[i2]) && (colonne2[i1] == colonne2[i2])){
 						for(int i = 0; i<9; i++){
 							// si on ne modifie rien, il ne faut pas renvoyer true !
-							if((i != i1) && (i != i2) && ((notes[i][colonne1[i1]][n-1] == true) || (notes[i][colonne2[i1]][n-1] == true))){
-								notes[i][colonne1[i1]][n-1] = false ;
-								notes[i][colonne2[i1]][n-1] = false ;
+							if((i != i1) && (i != i2) && ((g->notes[i][colonne1[i1]][n-1] == true) || (g->notes[i][colonne2[i1]][n-1] == true))){
+								g->notes[i][colonne1[i1]][n-1] = false ;
+								g->notes[i][colonne2[i1]][n-1] = false ;
 								//printf("Technique : x_wing\n");
 								//printf("On retire %d ligne %d et colonnes %d et %d\n", n, i, colonne1[i1], colonne2[i1]);
 								if (trouve == false){
@@ -76,7 +80,7 @@ bool x_wing(bool ***notes){
 			// on parcourt la colonne choisie
 			for(int i = 0; i<9; i++){
 				// si la case ij peut accueillir n (Attention au décalage d'indices !)
-				if (notes[i][j][n-1]){
+				if (g->notes[i][j][n-1]){
 					countc[j] ++ ;
 					if(ligne1[j]==-1){
 						ligne1[j] = i;
@@ -99,9 +103,9 @@ bool x_wing(bool ***notes){
 					if((ligne1[j1] == ligne1[j2]) && (ligne2[j1] == ligne2[j2])){
 						for(int j = 0; j<9; j++){
 							// si on ne modifie rien, il ne faut pas renvoyer true !
-							if((j != j1) && (j != j2) && ((notes[ligne1[j1]][j][n-1] == true) || (notes[ligne2[j1]][j][n-1] == true))){
-								notes[ligne1[j1]][j][n-1] = false ;
-								notes[ligne2[j1]][j][n-1] = false ;
+							if((j != j1) && (j != j2) && ((g->notes[ligne1[j1]][j][n-1] == true) || (g->notes[ligne2[j1]][j][n-1] == true))){
+								g->notes[ligne1[j1]][j][n-1] = false ;
+								g->notes[ligne2[j1]][j][n-1] = false ;
 								//printf("Technique : x_wing\n");
 								//printf("On retire %d lignes %d et %d  et colonne %d\n", n, ligne1[j1], ligne2[j1], j);
 								if (trouve == false){

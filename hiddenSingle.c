@@ -4,8 +4,14 @@
 #include <stdlib.h>
 #include <time.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
 
-void updateNotes(int** grid, bool*** notes, int row, int col);
+void updateNotes(grid_t g, int row, int col);
 void printGrid(int** grid);
 void consequences_new_number(int **grid, bool ***notes, int i, int j, float* nb_techniques);
 
@@ -13,7 +19,7 @@ void consequences_new_number(int **grid, bool ***notes, int i, int j, float* nb_
 Entrée : une grille et les notes associèes 
 Sortie : Booléen
 Si une note n'est présente qu'une seule fois dans une ligne, colonne ou zones. Alors elle ne peut être ailleurs et aucune autre notes de peut être dans sa case */
-int hiddenSingle(int** grid, bool*** notes, float* nb_techniques){
+int hiddenSingle(grid_t g){
 	// renvoie true si on parvient à placer un chiffre avec la technique du hidden single et place ledit chiffre
 	// renvoie false sinon
 
@@ -23,8 +29,8 @@ int hiddenSingle(int** grid, bool*** notes, float* nb_techniques){
 		int nb_pos = 9;
 		for (int j = 0; j < 9; j++){
 			//si la valeur est présente sur la ligne, on met sa valeur de possibilities à false 
-			if(grid[i][j]!= 0){
-				possibilities[grid[i][j]-1] = false ;
+			if(g->grid[i][j]!= 0){
+				possibilities[g->grid[i][j]-1] = false ;
 				nb_pos -- ;
 			}
 		}
@@ -35,17 +41,18 @@ int hiddenSingle(int** grid, bool*** notes, float* nb_techniques){
 				int col ;
 				for(int j = 0; j<9; j++){
 					//lorsque la notes est présente sur une ligne, on itère le compteur
-					if(notes[i][j][value - 1]){
+					if(g->notes[i][j][value - 1]){
 						count ++;
 						col = j ;
 					}
 				}
 				if (count == 1){ // si un seul emplacement est disponible alors on place l'indice 
-					grid[i][col] = value ;
+					g->grid[i][col] = value ;
 					//printf("Technique : hiddenSingle1\n");
 					//printf("row = %d, col = %d, val = %d\n", i, col, value);
-					consequences_new_number(grid, notes, i, col, nb_techniques);
-					//updateNotes(grid, notes, i, col); //on renouvelle la grille de notes après avoir placé l'indice 
+					//consequences_new_number(grid, notes, i, col, nb_techniques);
+					updateNotes(g, i, col); //on renouvelle la grille de notes après avoir placé l'indice 
+					assert(nb_pos>=1);
 					return nb_pos;
 				}
 			}
@@ -56,8 +63,8 @@ int hiddenSingle(int** grid, bool*** notes, float* nb_techniques){
 		bool possibilities[9] = {true, true, true, true, true, true, true, true, true};
 		int nb_pos = 9;
 		for (int i = 0; i < 9; i++){
-			if(grid[i][j]!= 0){
-				possibilities[grid[i][j]-1] = false ;
+			if(g->grid[i][j]!= 0){
+				possibilities[g->grid[i][j]-1] = false ;
 				nb_pos--;
 			}
 		}
@@ -67,17 +74,18 @@ int hiddenSingle(int** grid, bool*** notes, float* nb_techniques){
 				int count = 0 ;
 				int row ;
 				for(int i = 0; i<9; i++){
-					if(notes[i][j][value - 1]){
+					if(g->notes[i][j][value - 1]){
 						count ++;
 						row = i ;
 					}
 				}
 				if (count == 1){ // si un seul emplacement est disponible
-					grid[row][j] = value ;
+					g->grid[row][j] = value ;
 					//printf("Technique : hiddenSingle2\n");
 					//printf("row = %d, col = %d, val = %d\n", row, j, value);
-					//updateNotes(grid, notes, row, j);
-					consequences_new_number(grid, notes, row, j, nb_techniques);
+					updateNotes(g, row, j);
+					//consequences_new_number(grid, notes, row, j, nb_techniques);
+					assert(nb_pos>=1);
 					return nb_pos;
 				}
 			}
@@ -89,8 +97,8 @@ int hiddenSingle(int** grid, bool*** notes, float* nb_techniques){
 		int nb_pos = 9;
 		for (int i = 0; i < 3; i++){
 			for(int j = 0; j<3; j++){
-				if(grid[3*(z/3)+i][3*(z%3) + j]!= 0){
-					possibilities[grid[3*(z/3)+i][3*(z%3) + j] - 1] = false ;
+				if(g->grid[3*(z/3)+i][3*(z%3) + j]!= 0){
+					possibilities[g->grid[3*(z/3)+i][3*(z%3) + j] - 1] = false ;
 					nb_pos -- ;
 				}
 			}
@@ -103,7 +111,7 @@ int hiddenSingle(int** grid, bool*** notes, float* nb_techniques){
 				int col ;
 				for(int i = 0; i<3; i++){
 					for(int j = 0; j<3 ; j++){
-						if(notes[3*(z/3)+i][3*(z%3) + j][value - 1]){
+						if(g->notes[3*(z/3)+i][3*(z%3) + j][value - 1]){
 							count ++;
 							row = 3*(z/3) + i ;
 							col = 3*(z%3) + j ;
@@ -111,11 +119,12 @@ int hiddenSingle(int** grid, bool*** notes, float* nb_techniques){
 					}
 				}
 				if (count == 1){ // si un seul emplacement est disponible
-					grid[row][col] = value ;
+					g->grid[row][col] = value ;
 					//printf("Technique : hiddenSingle3\n");
 					//printf("row = %d, col = %d, val = %d\n", row, col, value);
-					//updateNotes(grid, notes, row, col);
-					consequences_new_number(grid, notes, row, col, nb_techniques);
+					updateNotes(g, row, col);
+					//consequences_new_number(grid, notes, row, col, nb_techniques);
+					assert(nb_pos>=1);
 					return nb_pos;
 				}
 			}
@@ -159,9 +168,9 @@ int hiddenSingle_one_cell(int** grid, bool*** notes, int i, int j, int k, float*
 			//printf("Technique : hiddenSingle1_one_cell\n");
 			//printf("row = %d, col = %d, val = %d\n", i, col, k+1);
 			grid[i][col] = k+1 ;
-			//printGrid(grid);
+			printGrid(grid);
 			//updateNotes(grid, notes, i, col); //on renouvelle la grille de notes après avoir placé l'indice 
-			consequences_new_number(grid, notes, i, col, nb_techniques);
+			//consequences_new_number(grid, notes, i, col, nb_techniques);
 			return nb_pos;
 		}
 	}
@@ -193,9 +202,9 @@ int hiddenSingle_one_cell(int** grid, bool*** notes, int i, int j, int k, float*
 				//printf("Technique : hiddenSingle2_one_cell\n");
 				//printf("row = %d, col = %d, val = %d\n", row, j, k+1);
 				grid[row][j] = k+1 ;
-				//printGrid(grid);
+				printGrid(grid);
 				//updateNotes(grid, notes, row, j);
-				consequences_new_number(grid, notes, row, j, nb_techniques);
+				//consequences_new_number(grid, notes, row, j, nb_techniques);
 				return nb_pos;
 			}
 		}
@@ -234,9 +243,9 @@ int hiddenSingle_one_cell(int** grid, bool*** notes, int i, int j, int k, float*
 				//printf("Technique : hiddenSingle3_one_cell\n");
 				//printf("row = %d, col = %d, val = %d\n", row, col, k+1);
 				grid[row][col] = k+1 ;
-				//printGrid(grid);
+				printGrid(grid);
 				//updateNotes(grid, notes, row, col);
-				consequences_new_number(grid, notes, row, col, nb_techniques);
+				//consequences_new_number(grid, notes, row, col, nb_techniques);
 				return nb_pos;
 			}
 		}

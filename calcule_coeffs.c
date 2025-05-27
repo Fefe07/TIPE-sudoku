@@ -53,35 +53,37 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
             }
 
         }
-        else{
-            free(nouveaux_coeffs);
-            free(nouveaux_coeffs_first_use);
-        }
+        
+        free(nouveaux_coeffs);
+        free(nouveaux_coeffs_first_use);
+        
         T = T*0.9999 ;
 
 		if(i%10000 == 0){
-			printf("i = %d : \n", i);
+			//printf("i = %d : \n", i);
 			print_tab_float(coeffs, 13);
 			print_tab_float(coeffs_first_use, 13);
-			printf("Cout = %f\n", cout);
+			//printf("Cout = %f\n", cout);
 			float ec = sqrt(cout);
-			printf("ecart-type = %f\n", ec);
-            printf("T = %f\n", T);
+			//printf("ecart-type = %f\n", ec);
+            //printf("T = %f\n", T);
 			
 		}
 		i++;
 	}
     print_tab_float(best_coeffs, 13);
     print_tab_float(best_coeffs_first_use, 13);
-    printf("Cout = %f\n", best_cout);
+    //printf("Cout = %f\n", best_cout);
     float ec = sqrt(best_cout);
-    printf("ecart-type = %f\n", ec);
-    printf("T = %f\n", T);
+    //printf("ecart-type = %f\n", ec);
+    //printf("T = %f\n", T);
 
     for(int i = 0; i<13; i++){
         coeffs[i] = best_coeffs[i] ;
         coeffs_first_use[i] = best_coeffs_first_use[i] ;
     }
+    free(best_coeffs);
+    free(best_coeffs_first_use);
     
 
 }
@@ -132,12 +134,12 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
 // 			//}
 // 		}
 // 		if(i%10 == 0){
-// 			printf("i = %d : \n", i);
+// 			//printf("i = %d : \n", i);
 // 			print_tab_float(coeffs, 13);
 // 			print_tab_float(coeffs_first_use, 13);
-// 			printf("Cout = %f\n", cout);
+// 			//printf("Cout = %f\n", cout);
 // 			float ec	= sqrt(cout);
-// 			printf("ecart-type = %f\n", ec);
+// 			//printf("ecart-type = %f\n", ec);
 // 			fflush(stdout);
 // 		}
 // 		i++;

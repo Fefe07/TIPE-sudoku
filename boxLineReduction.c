@@ -1,12 +1,20 @@
 #include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
+
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
 
 /*La technique de box line reduction consiste à éliminer des indices sur une lignes ou une colonne car ils sont forcément présents sur cette ligne et dans une autre zone*/
 
-void updateNotes(int** grid, bool*** notes, int row, int col);
+void updateNotes(grid_t g, int row, int col);
 
 
-bool boxLineReduction(bool*** notes){
+bool boxLineReduction(grid_t g){
 
 	// on parcourt les lignes
 	for(int i = 0; i<9; i++){
@@ -18,7 +26,7 @@ bool boxLineReduction(bool*** notes){
 			int zone = -1 ;
 			for(int z = 0; z<3; z++){
 				// si il y a un indice dans la zone on incrémente le nombre de zone contenant l'indice 
-				if (notes[i][3*z][value]||notes[i][3*z+1][value]||notes[i][3*z+2][value]){
+				if (g->notes[i][3*z][value]||g->notes[i][3*z+1][value]||g->notes[i][3*z+2][value]){
 					count ++ ;
 					zone = z ;
 				}
@@ -30,8 +38,8 @@ bool boxLineReduction(bool*** notes){
 				assert(zone!=-1);
 				bool verif = false;
 				for(int k=0; k<9;k++){
-					if((k<3*(i%3) || k > 3*(i%3)+2) && notes[3*(i/3)+k/3][3*zone+k%3][value]){  
-						notes[3*(i/3)+k/3][3*zone+k%3][value] = false;
+					if((k<3*(i%3) || k > 3*(i%3)+2) && g->notes[3*(i/3)+k/3][3*zone+k%3][value]){  
+						g->notes[3*(i/3)+k/3][3*zone+k%3][value] = false;
 						//une valeur à élaguer a été trouvé donc on spécifie que la technique a été utilisé 
 						verif = true ;
 					}
@@ -56,7 +64,7 @@ bool boxLineReduction(bool*** notes){
 			int zone = -1 ;
 			for(int z = 0; z<3; z++){
 				// si il y a un indice dans la zone
-				if (notes[3*z][j][value]||notes[3*z+1][j][value]||notes[3*z+2][j][value]){
+				if (g->notes[3*z][j][value]||g->notes[3*z+1][j][value]||g->notes[3*z+2][j][value]){
 					count ++ ;
 					zone = z ;
 				}
@@ -67,8 +75,8 @@ bool boxLineReduction(bool*** notes){
 				// on modifie le reste de la zone
 				bool verif = false ;
 				for(int k=0; k<9;k++){
-					if(k%3 != j%3 && notes[3*zone+k/3][3*(j/3)+k%3][value]) {
-						notes[3*zone+k/3][3*(j/3)+k%3][value] = false;
+					if(k%3 != j%3 && g->notes[3*zone+k/3][3*(j/3)+k%3][value]) {
+						g->notes[3*zone+k/3][3*(j/3)+k%3][value] = false;
 						verif = true ;
 					}
 				}

@@ -1,9 +1,14 @@
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
 
-bool swordfish(bool ***notes){
+bool swordfish(grid_t g){
 	bool trouve = false ;
 
 	// pour chaque chiffre
@@ -18,7 +23,7 @@ bool swordfish(bool ***notes){
 			// on parcourt la ligne choisie
 			for(int j = 0; j<9; j++){
 				// si la case ij peut accueillir n (Attention au décalage d'indices !)
-				if (notes[i][j][n-1]){
+				if (g->notes[i][j][n-1]){
 					countl[i] ++ ;
 				}
 			}
@@ -39,7 +44,7 @@ bool swordfish(bool ***notes){
 								bool place[9] = {false,false,false,false,false,false,false,false,false};
 								int count = 0;
 								for(int j = 0; j<9; j++){
-									if (notes[i1][j][n-1]||notes[i2][j][n-1]||notes[i3][j][n-1]){
+									if (g->notes[i1][j][n-1]||g->notes[i2][j][n-1]||g->notes[i3][j][n-1]){
 										place[j] = true;
 										count ++;
 									}
@@ -50,8 +55,8 @@ bool swordfish(bool ***notes){
 										// si on ne modifie rien, il ne faut pas renvoyer true !
 										if(place[j]){
 											for(int i = 0; i<9; i++){
-												if((i != i1) && (i != i2) && (i!=i3) && notes[i][j][n-1]){
-													notes[i][j][n-1] = false ;
+												if((i != i1) && (i != i2) && (i!=i3) && g->notes[i][j][n-1]){
+													g->notes[i][j][n-1] = false ;
 													//printf("Technique : swordfish\n");
 													//printf("On retire %d en %d %d\n", n, i, j);
 													trouve = true ;
@@ -81,7 +86,7 @@ bool swordfish(bool ***notes){
 			// on parcourt la colonne choisie
 			for(int i = 0; i<9; i++){
 				// si la case ij peut accueillir n (Attention au décalage d'indices !)
-				if (notes[i][j][n-1]){
+				if (g->notes[i][j][n-1]){
 					countc[j] ++ ;
 				}
 			}
@@ -105,7 +110,7 @@ bool swordfish(bool ***notes){
 								bool place[9] = {false,false,false,false,false,false,false,false,false};
 								int count = 0;
 								for(int i = 0; i<9; i++){
-									if (notes[i][j1][n-1]||notes[i][j2][n-1]||notes[i][j3][n-1]){
+									if (g->notes[i][j1][n-1]||g->notes[i][j2][n-1]||g->notes[i][j3][n-1]){
 										place[i] = true;
 										count ++;
 									}
@@ -117,8 +122,8 @@ bool swordfish(bool ***notes){
 										if(place[i]){
 											for(int j = 0; j<9; j++){
 												// si on ne modifie rien, il ne faut pas renvoyer true !
-												if((j != j1) && (j != j2) && (j!=j3) && notes[i][j][n-1]){
-													notes[i][j][n-1] = false ;
+												if((j != j1) && (j != j2) && (j!=j3) && g->notes[i][j][n-1]){
+													g->notes[i][j][n-1] = false ;
 													//printf("Technique : swordfish\n");
 													//printf("On retire %d en %d %d\n", n, i, j);
 													trouve = true ;

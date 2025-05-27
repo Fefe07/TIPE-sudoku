@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
+
 /*Fonction globale naked pair
 Entrée : une grille de notes
 Sortie : booléen (true si une nouvelle paire nue a été trouvée, false sinon )
@@ -14,18 +21,18 @@ les colonnes et les zones )*/
 bool nakedPair_line(bool ***notes);
 bool nakedPair_column(bool ***notes);
 bool nakedPair_zone(bool ***notes);
-float* consequences_removed_note(int** grid, bool*** notes, int i, int j, int k, float* nb_techniques);
+//float* consequences_removed_note(int** grid, bool*** notes, int i, int j, int k, float* nb_techniques);
 void printGrid(int** grid);
 void free_zones(bool*** zones);
 
-bool nakedPair(bool ***notes) {
+bool nakedPair(grid_t g) {
     bool ok  ;
-    ok = nakedPair_line(notes);
+    ok = nakedPair_line(g->notes);
     if (!ok) {
-        ok = nakedPair_column(notes);
+        ok = nakedPair_column(g->notes);
     }
     if (!ok) {
-        ok = nakedPair_zone(notes);
+        ok = nakedPair_zone(g->notes);
     }
 
     return ok;
@@ -152,8 +159,7 @@ bool nakedPair_column(bool ***notes) {
                             }
                             if (verif) {
                                 //printf("Technique : nakedPair colonne\n");
-                                //printf("les cases %d et %d forme une paire nue colonne %d\n",
-                                //j + 1, k + 1, i + 1);
+                                //printf("les cases %d et %d forme une paire nue colonne %d\n", j + 1, k + 1, i + 1);
                                 return true;
                             }
                         }
@@ -214,8 +220,7 @@ bool nakedPair_line(bool ***notes) {
                             }
                             if (verif) {
                                 //printf("Technique : nakedPair ligne\n");
-                                //printf("les cases %d et %d forme une paire nue ligne %d\n",
-                                //             j + 1, k + 1, i + 1);
+                                //printf("les cases %d et %d forme une paire nue ligne %d\n", j + 1, k + 1, i + 1);
                                 return true;
                             }
                         }
@@ -232,14 +237,14 @@ bool nakedPair_one_zone_one_value(int** grid, bool ***notes, int z, int k, float
 bool nakedPair_one_column_one_value(int** grid, bool ***notes, int i, int k, float* nb_techniques);
 bool nakedPair_one_line_one_value(int** grid, bool ***notes, int i, int k, float* nb_techniques);
 
-bool nakedPair_one_cell_value(int** grid, bool ***notes, int i, int j, int k, float* nb_techniques){
+bool nakedPair_one_cell_value(grid_t g, int i, int j, int k){
     bool ok ;
-    ok = nakedPair_one_zone_one_value(grid, notes, 3*(i/3) + j/3, k, nb_techniques);
+    ok = nakedPair_one_zone_one_value(g->grid, g->notes, 3*(i/3) + j/3, k, g->nb_techniques);
     if (!ok){
-        ok = nakedPair_one_line_one_value(grid, notes, i, k, nb_techniques);
+        ok = nakedPair_one_line_one_value(g->grid, g->notes, i, k, g->nb_techniques);
     }
     if(!ok){
-        ok = nakedPair_one_column_one_value(grid, notes, j, k, nb_techniques);
+        ok = nakedPair_one_column_one_value(g->grid, g->notes, j, k, g->nb_techniques);
     }
     return ok ;
 }
@@ -314,17 +319,17 @@ bool nakedPair_one_zone_one_value(int** grid, bool ***notes, int z, int k, float
                     if (verif) {
                         //printf("Technique : nakedPair zone_one_cell\n");
                         //printf("les cases %d et %d forme une paire nue zone %d\n", j + 1, k + 1, z + 1);
-                        for(int n = 0; n<9; n++){
-                            for(int m = 0; m<9; m++){
-                                if(todo[n][m]){
-                                    float * to_add = consequences_removed_note(grid, notes, z, m, n, nb_techniques);
-                                    for(int i = 0; i<13; i++){
-                                        nb_techniques[i] += to_add[i] * count ;
-                                    }
-                                    free(to_add);
-                                }
-                            }
-                        }
+                        // for(int n = 0; n<9; n++){
+                        //     for(int m = 0; m<9; m++){
+                        //         if(todo[n][m]){
+                        //             float * to_add = consequences_removed_note(grid, notes, z, m, n, nb_techniques);
+                        //             for(int i = 0; i<13; i++){
+                        //                 nb_techniques[i] += to_add[i] * count ;
+                        //             }
+                        //             free(to_add);
+                        //         }
+                        //     }
+                        // }
                         for(int i = 0; i<9; i++){
                             free(todo[i]);
                         }

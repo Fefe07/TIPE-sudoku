@@ -138,7 +138,7 @@ bool egal_vars(var v1, var v2){
 
 void ls_print(lit_set ls){
     if(ls!=NULL){
-        printf("i = %d, j = %d, k = %d, b = %d\n", ls->v.i, ls->v.j, ls->v.k, ls->positif);
+        //printf("i = %d, j = %d, k = %d, b = %d\n", ls->v.i, ls->v.j, ls->v.k, ls->positif);
         ls_print(ls->next);
     }
 }
@@ -151,13 +151,13 @@ void ls_union(lit_set ls1, lit_set ls2){
     /* Fait l'union de ls1 et ls2 */
     /* *ls1 est modifié pour contenir cette union */
     /* ls2 n'est pas libéré ni altéré */
-    printf("Union\n");
+    //printf("Union\n");
     if(ls2!=NULL){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
             ls_union(ls1, ls2->next);
         }
         else{
-            printf("ls1 =  ");
+            //printf("ls1 =  ");
             ls_print(ls1);
             
 
@@ -168,7 +168,7 @@ void ls_union(lit_set ls1, lit_set ls2){
             ls1->positif = ls2->positif;
             ls1->v = ls2->v ;
 
-            printf("ls1 =  ");
+            //printf("ls1 =  ");
             ls_print(ls1);
             ls_union(ls1, ls2->next);
             
@@ -201,7 +201,7 @@ bool ls_is_empty(lit_set ls){
 
 lit_set ls_inter(lit_set ls1, lit_set ls2){
     /* Fait l'intersection de ls1 et ls2 */
-    printf("Inter\n");
+    //printf("Inter\n");
     if(ls2!=NULL){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
             lit_set sing = ls_singleton(ls2->v, ls2->positif);
@@ -243,7 +243,7 @@ void substitue(var v, bool b, k_cnf f){
 
 
     //printf("Subitute :");
-    //print_var(v) ;
+    print_var(v) ;
     //printf(", b= %d\n",b);
 
 
@@ -289,7 +289,7 @@ lit_set* quine(k_cnf f){ //ok
     //printf("########### Quine : ############\n");
     for(int c = 0; c<f->m; c++){
         //printf("%d   ", f->clauses[c].nb_lit);
-        //print_clause(f->clauses[c]);
+        print_clause(f->clauses[c]);
         if(f->clauses[c].nb_lit == 1){
             lit_set* found = malloc(sizeof(lit_set));
             assert(found!=NULL);
@@ -380,7 +380,7 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
 
     //printf("Disjonction !\n");
     if(profondeur<30){
-        printf("profondeur = %d,  m = %d\n",profondeur, f->m);
+        //printf("profondeur = %d,  m = %d\n",profondeur, f->m);
     }
     nb_disjonctions[profondeur]++;
 
@@ -432,9 +432,9 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                     finished_quine_t = true ;
                 }
                 else{
-                    printf("Coucou\n");
+                    //printf("Coucou\n");
                     ls_union(modified_t, *found);
-                    printf("Coucou\n");
+                    //printf("Coucou\n");
                     ls_free(*found);
                     free(found);
                 }
@@ -444,16 +444,16 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
                 /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
                 //printf("La formule est insatisfiable d'après Quine\n");
-                printf("Coucou2\n");
+                //printf("Coucou2\n");
                 assert(modified_f!=NULL);
-                printf("modified_t = \n");
+                //printf("modified_t = \n");
                 ls_print(modified_t);
-                printf("modified_f = \n");
+                //printf("modified_f = \n");
                 ls_print(modified_f);
                 ls_union(modified_t, modified_f);
-                printf("modified_t = \n");
+                //printf("modified_t = \n");
                 ls_print(modified_t);
-                printf("modified_f = \n");
+                //printf("modified_f = \n");
                 ls_print(modified_f);
                 assert(ls_inter(modified_f,modified_t)!=NULL);
             }
@@ -480,7 +480,7 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                     finished_quine_f = true ;
                 }
                 else{
-                    printf("Coucou3\n");
+                    //printf("Coucou3\n");
                     ls_union(modified_f, *found);
                     
                     ls_free(*found);
@@ -492,7 +492,7 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
                 /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
                 //printf("La formule est insatisfiable d'après Quine\n");
-                printf("Coucou4\n");
+                //printf("Coucou4\n");
                 ls_union(modified_f, modified_t);
                 
             }
@@ -508,7 +508,7 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 //ls_print(ls);
                 if(!ls_is_empty(ls)){
                     //printf("ls est non vide\n");
-                    printf("Coucou5\n");
+                    //printf("Coucou5\n");
                     ls_union(modified_t, ls);
                     ls_free(ls);
                     
@@ -532,7 +532,7 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 //ls_print(ls);
                 if(!ls_is_empty(ls)){
                     //printf("ls est non vide\n");
-                    printf("Coucou6\n");
+                    //printf("Coucou6\n");
                     ls_union(modified_f, ls);
                     ls_free(ls);
                     
@@ -592,10 +592,10 @@ void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines){
         lit_set* found = quine(f) ;
 
         nb_quines[0]++ ;
-        //print_k_cnf(f);
+        print_k_cnf(f);
         if(found==NULL){
             
-            printf("La formule initiale est insatisfiable !\n");
+            //printf("La formule initiale est insatisfiable !\n");
             fflush(stdout);
             assert(42==69);
         }
@@ -607,7 +607,7 @@ void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines){
                 //printf (" ls = \n");
                 //ls_print(ls);
                 ls_free(ls);
-                //print_k_cnf(f);
+                print_k_cnf(f);
             }
             else{
                 ls_free(*found);

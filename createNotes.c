@@ -15,18 +15,12 @@ bool*** createNotes() {
     for (int i = 0; i < 9; i++) {
         notes[i] = malloc(9 * sizeof(bool *));
         assert(notes[i]!=NULL);
-    }
-    for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             notes[i][j] = malloc(9 * sizeof(bool));
             assert(notes[i][j]!=NULL);
-        }
-    }
-    //on initialise toute la grille à true, la grille sera modifiée en fonction des indices ultérieurement  
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
             for (int k = 0; k < 9; k++) {
                 notes[i][j][k] = true;
+                //on initialise toute la grille à true, la grille sera modifiée en fonction des indices ultérieurement
             }
         }
     }

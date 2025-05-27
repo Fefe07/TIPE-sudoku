@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ; 
+
 /*Fonction globale naked Triple
 Entrée : une grille de notes
 Sortie : booléen (true si un nouveau triplet nu a été trouvé, false sinon)
@@ -16,18 +23,18 @@ bool nakedTriple_column(bool ***notes);
 bool nakedTriple_zone(bool ***notes);
 void free_zones(bool*** zones);
 
-bool nakedTriple(bool ***notes) {
+bool nakedTriple(grid_t g) {
   //printf("coucou from nakedTriple\n");
   bool ok;
   //printf("on lance sur les lignes\n");
-  ok = nakedTriple_line(notes);
+  ok = nakedTriple_line(g->notes);
   if (!ok) {
     //printf("on lance sur les colonnes\n");
-    ok = nakedTriple_column(notes);
+    ok = nakedTriple_column(g->notes);
   }
   if (!ok) {
     //printf("on lance sur les zones\n");
-    ok = nakedTriple_zone(notes);
+    ok = nakedTriple_zone(g->notes);
   }
   return ok;
 }
@@ -88,8 +95,7 @@ bool nakedTriple_line(bool ***notes) {
                   }
                   if (verif) {
                     //printf("Technique : nakedTriple ligne\n");
-                    //printf("les cases %d, %d et %d forme un triplet nu ligne %d\n",
-                    //       j + 1, k + 1, p + 1, i + 1);
+                    //printf("les cases %d, %d et %d forme un triplet nu ligne %d\n", j + 1, k + 1, p + 1, i + 1);
                     return true;
                   }
                 }
@@ -250,9 +256,7 @@ bool nakedTriple_zone(bool ***notes) {
                   }
                   if (verif) {
                     //printf("Technique : nakedTriple zone\n");
-                    //printf(
-                    //    "les cases %d, %d et %d forme un triplet nu zone %d\n",
-                    //    j + 1, k + 1, p + 1, i + 1);
+                    //printf("les cases %d, %d et %d forme un triplet nu zone %d\n", j + 1, k + 1, p + 1, i + 1);
                     free_zones(zones);
                     return true;
                   }

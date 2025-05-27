@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+struct grid_s {
+	int** grid ;
+	bool*** notes ;
+	float* nb_techniques;
+};
+typedef struct grid_s* grid_t ;
+
 /*Fonction globale hidden pair
 Entrée : une grille de notes
 Sortie : booléen (si une nouvelle paire cachée a été trouvée ou non)
@@ -15,18 +22,18 @@ bool hiddenPair_column(bool ***notes);
 bool hiddenPair_zone(bool ***notes);
 void free_zones(bool*** zones);
 
-bool hiddenPair(bool ***notes) {
-   //printf("Coucou from hiddenpair\n");
+bool hiddenPair(grid_t g) {
+      //printf("Coucou from hiddenpair\n");
    bool ok ;
    //printf("On lance sur les lignes\n");
-   ok = hiddenPair_line(notes);
+   ok = hiddenPair_line(g->notes);
    if(!ok){
       //printf("On lance sur les colonnes\n");
-      ok = hiddenPair_column(notes);
+      ok = hiddenPair_column(g->notes);
    }
    if(!ok){
       //printf("On lance sur les zones\n");
-      ok = hiddenPair_zone(notes);
+      ok = hiddenPair_zone(g->notes);
    }
 
    return ok;

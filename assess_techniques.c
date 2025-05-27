@@ -4,6 +4,7 @@
 #include<stdbool.h>
 
 void solve_simple_notes_backtrack(int** grid, float* nb_tech);
+void printGrid(int** grid);
 
 float assess_techniques(int** grid, float* coeffs, float* coeffs_first_use){
     float *nb_tech = malloc(13 * sizeof(float));
@@ -11,7 +12,7 @@ float assess_techniques(int** grid, float* coeffs, float* coeffs_first_use){
     for (int i = 0; i < 13; i++) {
         nb_tech[i] = 0.;
     }
-    //printGrid(g.grid);
+    printGrid(grid);
     solve_simple_notes_backtrack(grid, nb_tech);
     float score = 0. ;
     for(int i = 0; i<13; i++){
