@@ -11,11 +11,10 @@ typedef struct {
 
 // n : ligne à lire
 //le compteur sera mis à jour dans le main
-grid_one_diff lecture_db_B(int n, char* nom_de_la_base){
+grid_one_diff lecture_db_B(int n, char* nom_de_la_base, int cap){
 	FILE* f ;
 	f = fopen(nom_de_la_base, "r");
 
-	int cap = 1;
 
 	// on va à la ligne souhaitée
 	int line = 1;

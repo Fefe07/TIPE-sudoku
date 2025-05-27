@@ -12,7 +12,7 @@ typedef struct {
 
 // n : ligne à lire
 //le compteur sera mis à jour dans le main
-grid_diffs lecture_db_diffs(int n, char* nom_de_la_base){
+grid_diffs lecture_db_diffs(int n, char* nom_de_la_base, int cap){
 	FILE* f ;
 	f = fopen(nom_de_la_base, "r");
 
@@ -28,7 +28,7 @@ grid_diffs lecture_db_diffs(int n, char* nom_de_la_base){
 			
 		}
 	}
-	float d_tr = 42. ; 
+	float d_tr = cap+1 ; 
 	float d_to ;
 	grid_diffs g ;
 	
@@ -38,7 +38,7 @@ grid_diffs lecture_db_diffs(int n, char* nom_de_la_base){
 		mygrid[i] = malloc(9*sizeof(int));
 		assert(mygrid[i]!=NULL);
 	}
-	while(d_tr >41.){
+	while(d_tr >cap){
 		while (fgetc(f) != ',');
 
 		for(int i = 0; i<9; i++){

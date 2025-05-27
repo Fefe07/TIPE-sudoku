@@ -60,13 +60,13 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
         T = T*0.9999 ;
 
 		if(i%10000 == 0){
-			//printf("i = %d : \n", i);
+			printf("i = %d : \n", i);
 			print_tab_float(coeffs, 13);
 			print_tab_float(coeffs_first_use, 13);
-			//printf("Cout = %f\n", cout);
+			printf("Cout = %f\n", cout);
 			float ec = sqrt(cout);
-			//printf("ecart-type = %f\n", ec);
-            //printf("T = %f\n", T);
+			printf("ecart-type = %f\n", ec);
+            printf("T = %f\n", T);
 			
 		}
 		i++;

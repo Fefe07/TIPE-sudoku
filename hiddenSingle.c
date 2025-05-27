@@ -34,6 +34,7 @@ int hiddenSingle(grid_t g){
 				nb_pos -- ;
 			}
 		}
+		
 	//on cherche pour chaque valeur non présente si la note est unique 
 		for(int value = 1; value <= 9; value ++){
 			if(possibilities[value-1]){

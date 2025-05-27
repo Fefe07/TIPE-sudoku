@@ -47,9 +47,9 @@ bool y_wing(bool ***notes);
 bool swordfish(bool ***notes);
 
 bool solve(int **grid);
-bool solve_notes(grid_t g);
+bool solve_notes(grid_t g, bool(**techniques)(grid_t g), int n);
 bool backtrack(int **grid, bool ***notes, float *nb_techniques);
-void solve_simple_notes_backtrack(grid_t g);
+void solve_simple_notes_backtrack(grid_t g, bool(**techniques)(grid_t g), int n);
 
 int **lecture(int n, char *nom_de_la_base);
 typedef struct {
@@ -57,14 +57,14 @@ typedef struct {
 	float D_TR;
 	int **grid;
 } grid_diffs;
-grid_diffs lecture_db_diffs(int n, char *nom_de_la_base);
+grid_diffs lecture_db_diffs(int n, char *nom_de_la_base, int cap);
 
 typedef struct {
 	int difficulty;
 	int **grid;
 } grid_one_diff;
-grid_one_diff lecture_db_B(int n, char *nom_de_la_base);
-grid_one_diff lecture_db_C(int n, char *nom_de_la_base);
+grid_one_diff lecture_db_B(int n, char *nom_de_la_base, int cap);
+grid_one_diff lecture_db_C(int n, char *nom_de_la_base, int cap);
 
 
 
@@ -125,15 +125,15 @@ var heuristique_0(k_cnf f);
 
 void print_tab_int(int *tab, int size) {
 	for (int i = 0; i < size; i++) {
-		//printf("%d	", tab[i]);
+		printf("%d	", tab[i]);
 	}
-	//printf("\n");
+	printf("\n");
 }
 void print_tab_float(float *tab, int size) {
 	for (int i = 0; i < size; i++) {
-		//printf("%.4f,  ", tab[i]);
+		printf("%.4f,  ", tab[i]);
 	}
-	//printf("\n");
+	printf("\n");
 }
 
 float calcule_cout(float *coeffs, float *coeffs_first_use, float **results, float *difficulties, int results_size);
@@ -220,6 +220,23 @@ int main() {
 	// 	free(nb_quines);
 	// 	free_grid(g1.grid);
 	// }
+	// fclose(h);
+
+	int n = 12 ;
+	bool(**techniques)(grid_t) = malloc(12*sizeof(bool(*)(grid_t)));
+	assert(techniques!=NULL);
+	techniques[0] = &lastFreeCell ;
+	techniques[1] = (bool(*)(grid_t))&hiddenSingle ;
+	techniques[2] = (bool(*)(grid_t))&nakedSingle ;
+	techniques[3] = (bool(*)(grid_t))&nakedPair ;
+	techniques[4] = (bool(*)(grid_t))&nakedTriple ;
+	techniques[5] = (bool(*)(grid_t))&pointingPair ;
+	techniques[6] = (bool(*)(grid_t))&boxLineReduction ;
+	techniques[7] = (bool(*)(grid_t))&hiddenPair ;
+	techniques[8] = (bool(*)(grid_t))hiddenTriple ;
+	techniques[9] = (bool(*)(grid_t))x_wing ;
+	techniques[10] = (bool(*)(grid_t))y_wing ;
+	techniques[11] = (bool(*)(grid_t))swordfish ;
 
 
 
@@ -227,7 +244,7 @@ int main() {
 	float *coeffs = cree_coeffs();
 	float *coeffs_first_use = cree_coeffs_first_use();
 
-	int results_size = 10	;
+	int results_size = 10 ;
 	FILE *f = fopen("resultats.txt", "w");
 
 
@@ -238,12 +255,12 @@ int main() {
 
 	for (int nbGrille = 0; nbGrille < results_size ; nbGrille++) {
 		if(nbGrille%100 == 0){
-			//printf("Grille n %d\n", nbGrille);
+			printf("Grille n %d\n", nbGrille);
 		}
-		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv");
+		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv", 10);
 		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
-		printGrid(g.grid);
+		//printGrid(g.grid);
 		grid_t g2 = malloc(sizeof(struct grid_s));
 		assert(g2!=NULL);
 		g2->grid = g.grid ;
@@ -253,7 +270,7 @@ int main() {
 			g2->nb_techniques[i] = 0.;
 		}
 		
-		solve_simple_notes_backtrack(g2);
+		solve_simple_notes_backtrack(g2, techniques, 12);
 		if(nbGrille%100 == 0){
 			print_tab_float(g2->nb_techniques, 13);
 		}
@@ -315,6 +332,7 @@ int main() {
 	}
 	free(results);
 	free(difficulties);
+	free(techniques);
 
 	return 0;
 }

@@ -14,7 +14,7 @@ typedef struct grid_s* grid_t ;
 bool ***createNotes();
 void updateNotes(grid_t g, int row, int col);
 
-bool solve_notes(grid_t g);
+bool solve_notes(grid_t g, bool(**techniques)(grid_t), int n);
 bool est_ok(int** grid);
 
 void printGrid(int **grid);
@@ -22,7 +22,7 @@ void print_notes(bool ***notes);
 void free_grid(int** grid);
 void free_notes(bool*** notes);
 
-bool backtrack(grid_t g){
+bool backtrack(grid_t g, bool(**techniques)(grid_t), int n){
 	// Entrées : une grille (peut-etre deja une copie due a un precedent appel de cette fonction),
 	// 			 ses notes  
 	// Sorties : false si la grille n'a pas de solutions (impossible sur l'appel de l'original),
@@ -104,9 +104,9 @@ bool backtrack(grid_t g){
 			}*/
 
 			// on essaye de finir la grille
-			printGrid(newG->grid);
-			print_notes(newG->notes);
-			bool finished = solve_notes(newG);
+			//printGrid(newG->grid);
+			//print_notes(newG->notes);
+			bool finished = solve_notes(newG, techniques, n);
 			
 			if(est_ok(newG->grid)){
 			
@@ -114,7 +114,7 @@ bool backtrack(grid_t g){
 				// si on peut finir la grille avec le guess
 				if(finished){
 					//printf("On a trouve une solution !\n");
-					printGrid(newG->grid);
+					//printGrid(newG->grid);
 					//fflush(stdout);
 					for(int i=0; i<9; i++){
 						for(int j=0; j<9; j++){
@@ -126,10 +126,11 @@ bool backtrack(grid_t g){
 					}*/
 					free_grid(newG->grid);
 					free_notes(newG->notes);
+					free(newG);
 					return true ;
 				}
 				else {
-					bool correct = backtrack(newG);
+					bool correct = backtrack(newG, techniques, n);
 					if (correct){
 						//printf("On a trouve une solution !\n");
 						for(int i=0; i<9; i++){
@@ -143,6 +144,7 @@ bool backtrack(grid_t g){
 						}*/
 						free_grid(newG->grid);
 						free_notes(newG->notes);
+						free(newG);
 						return true ;
 					}
 					else{
@@ -155,6 +157,7 @@ bool backtrack(grid_t g){
 			}
 			free_grid(newG->grid);
 			free_notes(newG->notes);
+			free(newG);
 		}
 	}
 	// si on en arrive la, c'est qu'aucune des possibilités ne marchait
