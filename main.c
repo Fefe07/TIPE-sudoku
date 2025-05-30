@@ -139,7 +139,7 @@ void print_tab_float(float *tab, int size) {
 float calcule_cout(float *coeffs, float *coeffs_first_use, float **results, float *difficulties, int results_size);
 
 void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, float* difficulties, int results_size);
-
+void calcule_coeffs_neg(float* coeffs, float* coeffs_first_use, float** results, float* difficulties, int results_size);
 float *cree_coeffs() {
 	/* Tableau des techniques :
 	0 - last Free Cell
@@ -168,8 +168,8 @@ float *cree_coeffs_first_use() {
 	float *coeffs_first_use = malloc(13 * sizeof(float));
 	assert(coeffs_first_use != NULL);
 	for(int i = 0; i<13; i++){
-		coeffs_first_use[i] = (rand() % 100 + 10) / 50. ;	
-		//coeffs_first_use[i] = 0;
+		//coeffs_first_use[i] = (rand() % 100 + 10) / 50. ;	
+		coeffs_first_use[i] = 0;
 	}
 	//coeffs_first_use[2] = 0;
 	//coeffs_first_use[0] = 0;
@@ -226,14 +226,15 @@ int main() {
 	bool(**techniques)(grid_t) = malloc(12*sizeof(bool(*)(grid_t)));
 	assert(techniques!=NULL);
 	techniques[0] = &lastFreeCell ;
-	techniques[1] = (bool(*)(grid_t))&hiddenSingle ;
-	techniques[2] = (bool(*)(grid_t))&nakedSingle ;
-	techniques[3] = (bool(*)(grid_t))&nakedPair ;
-	techniques[4] = (bool(*)(grid_t))&nakedTriple ;
-	techniques[5] = (bool(*)(grid_t))&pointingPair ;
-	techniques[6] = (bool(*)(grid_t))&boxLineReduction ;
-	techniques[7] = (bool(*)(grid_t))&hiddenPair ;
-	techniques[8] = (bool(*)(grid_t))hiddenTriple ;
+	techniques[1] = (bool(*)(grid_t))&nakedSingle ;
+	techniques[2] = (bool(*)(grid_t))&nakedPair ;
+	techniques[3] = (bool(*)(grid_t))&nakedTriple ;
+	techniques[4] = (bool(*)(grid_t))&hiddenSingle ;
+	techniques[5] = (bool(*)(grid_t))&hiddenPair ;
+	techniques[6] = (bool(*)(grid_t))hiddenTriple ;
+	techniques[7] = (bool(*)(grid_t))&pointingPair ;
+	techniques[8] = (bool(*)(grid_t))&boxLineReduction ;
+
 	techniques[9] = (bool(*)(grid_t))x_wing ;
 	techniques[10] = (bool(*)(grid_t))y_wing ;
 	techniques[11] = (bool(*)(grid_t))swordfish ;
@@ -244,7 +245,7 @@ int main() {
 	float *coeffs = cree_coeffs();
 	float *coeffs_first_use = cree_coeffs_first_use();
 
-	int results_size = 10 ;
+	int results_size = 100 ;
 	FILE *f = fopen("resultats.txt", "w");
 
 
@@ -266,11 +267,12 @@ int main() {
 		g2->grid = g.grid ;
 		difficulties[nbGrille] = (float) g.difficulty+1;
 		g2->nb_techniques = malloc(13 * sizeof(float));
+		assert(g2->nb_techniques!=NULL);
 		for (int i = 0; i < 13; i++) {
 			g2->nb_techniques[i] = 0.;
 		}
 		
-		solve_simple_notes_backtrack(g2, techniques, 12);
+		solve_simple_notes_backtrack(g2, techniques, 12);	
 		if(nbGrille%100 == 0){
 			print_tab_float(g2->nb_techniques, 13);
 		}
@@ -286,10 +288,17 @@ int main() {
 		free(g2);
 	}
 	
-
+	for(int i = 0; i<13; i++){
+		int count = 0 ;
+		for(int j = 0; j<results_size; j++){
+			count += (int) results[j][i];
+		}
+		fprintf(f,"%d, ", count);
+	}
+	fprintf(f,"\n");
 	
 
-	calcule_coeffs(coeffs,coeffs_first_use,results,difficulties, results_size);
+	calcule_coeffs_neg(coeffs,coeffs_first_use,results,difficulties, results_size);
 	
 	/* Calcul des coefficients par descente de gradient au formalisme douteux */
 	for (int i = 0; i < 13; i++) {

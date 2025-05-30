@@ -42,14 +42,14 @@ void solve_simple_notes_backtrack(grid_t g, bool(**techniques)(grid_t g), int n)
 		//print_notes(g->notes);
 		finished = solve_notes(g, techniques, n);
 		
-		print_tab_float(g->nb_techniques, 13);
+		//print_tab_float(g->nb_techniques, 13);
 		// si les techniques ne suffisent pas,
 		// on passe au backtracking
 		if (!finished){
-			printGrid(g->grid);
+			//printGrid(g->grid);
 			finished = backtrack(g, techniques, n);
 			if (!finished){
-				printGrid(g->grid);
+				//printGrid(g->grid);
 				print_tab_float(g->nb_techniques,13);
 			}
 			assert(finished);

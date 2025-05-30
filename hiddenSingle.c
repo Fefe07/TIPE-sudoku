@@ -169,7 +169,7 @@ int hiddenSingle_one_cell(int** grid, bool*** notes, int i, int j, int k, float*
 			//printf("Technique : hiddenSingle1_one_cell\n");
 			//printf("row = %d, col = %d, val = %d\n", i, col, k+1);
 			grid[i][col] = k+1 ;
-			printGrid(grid);
+			//printGrid(grid);
 			//updateNotes(grid, notes, i, col); //on renouvelle la grille de notes après avoir placé l'indice 
 			//consequences_new_number(grid, notes, i, col, nb_techniques);
 			return nb_pos;
@@ -203,7 +203,7 @@ int hiddenSingle_one_cell(int** grid, bool*** notes, int i, int j, int k, float*
 				//printf("Technique : hiddenSingle2_one_cell\n");
 				//printf("row = %d, col = %d, val = %d\n", row, j, k+1);
 				grid[row][j] = k+1 ;
-				printGrid(grid);
+				//printGrid(grid);
 				//updateNotes(grid, notes, row, j);
 				//consequences_new_number(grid, notes, row, j, nb_techniques);
 				return nb_pos;
@@ -244,7 +244,7 @@ int hiddenSingle_one_cell(int** grid, bool*** notes, int i, int j, int k, float*
 				//printf("Technique : hiddenSingle3_one_cell\n");
 				//printf("row = %d, col = %d, val = %d\n", row, col, k+1);
 				grid[row][col] = k+1 ;
-				printGrid(grid);
+				//printGrid(grid);
 				//updateNotes(grid, notes, row, col);
 				//consequences_new_number(grid, notes, row, col, nb_techniques);
 				return nb_pos;

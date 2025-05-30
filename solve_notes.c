@@ -212,7 +212,7 @@ bool solve_notes(grid_t g, bool(**techniques)(grid_t g), int n) {
 
   if(!finished){
     //printf("SolveNotes pas fini\n");
-    printGrid(g->grid);
+    //printGrid(g->grid);
   }
   
   return finished ;
