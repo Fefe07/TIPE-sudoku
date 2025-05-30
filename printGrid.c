@@ -13,7 +13,12 @@ void printGrid(int **grid) {
 	printf("Grille actuelle : \n");
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
-			printf("%d  ", grid[i][j]);
+			if(grid[i][j]==0){
+				printf("   ");
+			}
+			else{
+				printf("%d  ", grid[i][j]);
+			}
 			if (j == 2 || j == 5) {
 				printf("| ");
 			}

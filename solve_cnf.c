@@ -138,7 +138,7 @@ bool egal_vars(var v1, var v2){
 
 void ls_print(lit_set ls){
     if(ls!=NULL){
-        //printf("i = %d, j = %d, k = %d, b = %d\n", ls->v.i, ls->v.j, ls->v.k, ls->positif);
+        printf("i = %d, j = %d, k = %d, b = %d\n", ls->v.i, ls->v.j, ls->v.k, ls->positif);
         ls_print(ls->next);
     }
 }
@@ -151,14 +151,19 @@ void ls_union(lit_set ls1, lit_set ls2){
     /* Fait l'union de ls1 et ls2 */
     /* *ls1 est modifié pour contenir cette union */
     /* ls2 n'est pas libéré ni altéré */
+
+    /* ATTENTION : NE FONCTIONNE PAS SI ls1==NULL */
     //printf("Union\n");
+
+    assert(ls1!=NULL);
+
     if(ls2!=NULL){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
             ls_union(ls1, ls2->next);
         }
         else{
             //printf("ls1 =  ");
-            ls_print(ls1);
+            //ls_print(ls1);
             
 
             lit_set ls = malloc(sizeof(struct lit_set_s));
@@ -169,9 +174,8 @@ void ls_union(lit_set ls1, lit_set ls2){
             ls1->v = ls2->v ;
 
             //printf("ls1 =  ");
-            ls_print(ls1);
+            //ls_print(ls1);
             ls_union(ls1, ls2->next);
-            
         }
     }
 }
@@ -206,9 +210,14 @@ lit_set ls_inter(lit_set ls1, lit_set ls2){
         if(ls_mem(ls2->v,ls2->positif,ls1)){ 
             lit_set sing = ls_singleton(ls2->v, ls2->positif);
             lit_set inter = ls_inter(ls1,ls2->next);
-            ls_union(inter,sing);
-            ls_free(sing);
-            return inter ;
+            if(inter!=NULL){
+                ls_union(inter,sing);
+                ls_free(sing);
+                return inter ;
+            }
+            else{
+                return sing;
+            }
         }
         else{
             return ls_inter(ls1,ls2->next);
@@ -221,6 +230,9 @@ lit_set ls_inter(lit_set ls1, lit_set ls2){
 
 
 var heuristique_0(k_cnf f){
+
+    /* Donne la première variable de la plus petite clause à valeurs positives */
+
     assert(f->m>0);
     int nb_lit_min = 42; 
     clause c_min ;
@@ -234,6 +246,55 @@ var heuristique_0(k_cnf f){
     assert(nb_lit_min>1); // sinon on n'appelerait pas h
     return c_min.vars[0];
 }
+
+
+var heuristique_1(k_cnf f){
+    /* On cherche ici la variable qui aurait le plus d'impact */
+    /* La variable est présente en positif sur exactement quatre clauses (ligne, colonne, bloc, case) 
+    (en effet, si on a résolu une de ces clauses, alors on sait ou placer le chiffre dans cette zone) */
+    /* La présence de la variable négative dépend de la taille de ces zones */
+    /* Du fait de l'exploration parallèle des deux cas, l'approche visant à maximiser le nombre d'occurences
+    du litéral négatif est contre-intuitive, il s'agit plutôt de maximiser son impact à l'aide d'une petite clause */
+    /* On va donc simplement affiner l'heuristique précédente */
+    
+    u_int8_t* count = malloc(2*9*9*9*sizeof(u_int8_t));
+    assert(count!=NULL);
+    for(int i = 0; i<1458; i++){
+        count[i]=0;
+    }
+    for(int c = 0; c<f->m; c++){
+        clause cl = f->clauses[c] ;
+        for(int i = 0; i<cl.nb_lit; i++){
+            int indice = cl.vars[i].i + 9*cl.vars[i].j + 81*cl.vars[i].k ;
+            if(cl.positif[i]){
+                indice+=729 ;
+            }
+            count[indice]++;
+        }
+    }
+    for(int i = 730; i<1458; i++){
+        assert(count[i]==0 || count[i]==4);
+    }
+
+    assert(f->m>0);
+    int nb_lit_min = 42; 
+    var best_var ;
+    for(int c = 0; c<f->m; c++){
+        /* On cherche les clauses à valeurs positives !*/
+        for(int i = 0; i<f->clauses[c].nb_lit; i++){
+            if(f->clauses[c].positif[i]&&(f->clauses[c].nb_lit<nb_lit_min || (f->clauses[c].nb_lit==nb_lit_min && count[f->clauses[c].vars[i].i + 9*f->clauses[c].vars[i].j + 81* f->clauses[c].vars[i].k] > count[best_var.i + 9*best_var.j + 81*best_var.k]))){
+                nb_lit_min = f->clauses[c].nb_lit ;
+                best_var = f->clauses[c].vars[i] ;
+            }
+        }
+    }
+    assert(nb_lit_min>1); // sinon on n'appelerait pas h
+    free(count);
+    return best_var;
+}
+
+
+
 
 void substitue(var v, bool b, k_cnf f){
     /* Met la variable v à la valeur b dans f */
@@ -379,8 +440,8 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
     /* Renvoie l'ensemble des litéraux communes (qui sont donc nécéssairement vrais)*/
 
     //printf("Disjonction !\n");
-    if(profondeur<30){
-        //printf("profondeur = %d,  m = %d\n",profondeur, f->m);
+    if(profondeur<3){
+        printf("profondeur = %d,  m = %d\n",profondeur, f->m);
     }
     nb_disjonctions[profondeur]++;
 
@@ -433,6 +494,7 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 }
                 else{
                     //printf("Coucou\n");
+                    // Par construction, modified_t!=NULL
                     ls_union(modified_t, *found);
                     //printf("Coucou\n");
                     ls_free(*found);
@@ -444,18 +506,20 @@ lit_set disjonction(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quine
                 /* Attention, ce qu'on va faire n'a aucun sens, mais permet de "valider" l'autre clause (puisque celle-là est fausse)*/
                 /* N.B. On ne dit pas que l'autre clause est forcément satisfiable, juste que si la clause mère est satisfiable, alors l'autre l'est aussi*/
                 //printf("La formule est insatisfiable d'après Quine\n");
-                //printf("Coucou2\n");
                 assert(modified_f!=NULL);
                 //printf("modified_t = \n");
-                ls_print(modified_t);
+                //ls_print(modified_t);
                 //printf("modified_f = \n");
-                ls_print(modified_f);
+                //ls_print(modified_f);
+                assert(modified_t!=NULL);
                 ls_union(modified_t, modified_f);
                 //printf("modified_t = \n");
-                ls_print(modified_t);
+                //ls_print(modified_t);
                 //printf("modified_f = \n");
-                ls_print(modified_f);
-                assert(ls_inter(modified_f,modified_t)!=NULL);
+                //ls_print(modified_f);
+                lit_set inter = ls_inter(modified_f,modified_t);
+                assert(inter!=NULL);
+                ls_free(inter);
             }
         }
         else if(!finished_quine_f){
