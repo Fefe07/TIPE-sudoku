@@ -121,7 +121,11 @@ int assess_nb_clues(int** grid);
 
 void solve_cnf(k_cnf f, var(*h)(k_cnf), int* nb_disjonctions, int* nb_quines);
 void free_k_cnf(k_cnf f);
+/* Random */
 var heuristique_0(k_cnf f);
+/* Minimum */
+var heuristique_1(k_cnf f);
+/* Maximum */
 var heuristique_1(k_cnf f);
 
 void print_tab_int(int *tab, int size) {
@@ -201,7 +205,7 @@ int main() {
 			nb_quines[i] = 0;
 		}
 
-		solve_cnf(phi, &heuristique_0, nb_disjonctions, nb_quines);
+		solve_cnf(phi, &heuristique_1, nb_disjonctions, nb_quines);
 		print_tab_int(nb_disjonctions, profondeur_max);
 		print_tab_int(nb_quines, profondeur_max);
 
@@ -227,15 +231,20 @@ int main() {
 	// bool(**techniques)(grid_t) = malloc(12*sizeof(bool(*)(grid_t)));
 	// assert(techniques!=NULL);
 	// techniques[0] = &lastFreeCell ;
-	// techniques[1] = (bool(*)(grid_t))&nakedSingle ;
-	// techniques[2] = (bool(*)(grid_t))&nakedPair ;
-	// techniques[3] = (bool(*)(grid_t))&nakedTriple ;
-	// techniques[4] = (bool(*)(grid_t))&hiddenSingle ;
-	// techniques[5] = (bool(*)(grid_t))&hiddenPair ;
-	// techniques[6] = (bool(*)(grid_t))hiddenTriple ;
-	// techniques[7] = (bool(*)(grid_t))&pointingPair ;
-	// techniques[8] = (bool(*)(grid_t))&boxLineReduction ;
+	// techniques[1] = (bool(*)(grid_t))&hiddenSingle ;
+	// techniques[5] = (bool(*)(grid_t))&pointingPair ;
+	// techniques[2] = (bool(*)(grid_t))&nakedSingle ;
+	// techniques[3] = (bool(*)(grid_t))&nakedPair ;
+	// techniques[4] = (bool(*)(grid_t))&nakedTriple ;
 
+
+	
+	// techniques[6] = (bool(*)(grid_t))&hiddenPair ;
+
+
+	// techniques[7] = (bool(*)(grid_t))hiddenTriple ;
+
+	// techniques[8] = (bool(*)(grid_t))&boxLineReduction ;
 	// techniques[9] = (bool(*)(grid_t))x_wing ;
 	// techniques[10] = (bool(*)(grid_t))y_wing ;
 	// techniques[11] = (bool(*)(grid_t))swordfish ;
@@ -246,7 +255,7 @@ int main() {
 	// float *coeffs = cree_coeffs();
 	// float *coeffs_first_use = cree_coeffs_first_use();
 
-	// int results_size = 100 ;
+	// int results_size = 344 ;
 	// FILE *f = fopen("resultats.txt", "w");
 
 
@@ -259,14 +268,14 @@ int main() {
 	// 	if(nbGrille%100 == 0){
 	// 		printf("Grille n %d\n", nbGrille);
 	// 	}
-	// 	grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv", 10);
+	// 	grid_diffs g = lecture_db_diffs(nbGrille+2, "grilles/Base_de_donnees_evaluees.csv", 42);
 	// 	//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
 	// 	//printGrid(g.grid);
 	// 	grid_t g2 = malloc(sizeof(struct grid_s));
 	// 	assert(g2!=NULL);
 	// 	g2->grid = g.grid ;
-	// 	difficulties[nbGrille] = (float) g.difficulty+1;
+	// 	difficulties[nbGrille] = (float) g.D_TR;
 	// 	g2->nb_techniques = malloc(13 * sizeof(float));
 	// 	assert(g2->nb_techniques!=NULL);
 	// 	for (int i = 0; i < 13; i++) {
@@ -294,9 +303,9 @@ int main() {
 	// 	for(int j = 0; j<results_size; j++){
 	// 		count += (int) results[j][i];
 	// 	}
-	// 	fprintf(f,"%d, ", count);
+	// 	printf("%d, ", count);
 	// }
-	// fprintf(f,"\n");
+	// printf("\n");
 	
 
 	// calcule_coeffs_neg(coeffs,coeffs_first_use,results,difficulties, results_size);

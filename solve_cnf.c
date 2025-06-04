@@ -231,32 +231,53 @@ lit_set ls_inter(lit_set ls1, lit_set ls2){
 
 var heuristique_0(k_cnf f){
 
-    /* Donne la première variable de la plus petite clause à valeurs positives */
+    /* Choisit une variable uniformément dans la cnf */
+    /* Les variables plus présentes ont plus de chances d'être choisies */
 
     assert(f->m>0);
-    int nb_lit_min = 42; 
-    clause c_min ;
+    int nb_vars_vues = 0;
+    var v_choisie ;
     for(int c = 0; c<f->m; c++){
         /* On cherche les clauses à valeurs positives !*/
-        if(f->clauses[c].nb_lit<nb_lit_min && f->clauses[c].positif[0]){
-            nb_lit_min = f->clauses[c].nb_lit ;
-            c_min = f->clauses[c] ;
+        for(int i = 0; i<f->clauses[c].nb_lit; i++){
+            nb_vars_vues ++ ;
+            if (rand()%nb_vars_vues==0){
+                v_choisie = f->clauses[c].vars[i];
+            }
         }
     }
-    assert(nb_lit_min>1); // sinon on n'appelerait pas h
-    return c_min.vars[0];
+
+    return v_choisie;
+
 }
 
 
-var heuristique_1(k_cnf f){
-    /* On cherche ici la variable qui aurait le plus d'impact */
+// var heuristique_1(k_cnf f){
+
+//     /* Donne la première variable de la plus petite clause à valeurs positives */
+
+//     assert(f->m>0);
+//     int nb_lit_min = 42; 
+//     clause c_min ;
+//     for(int c = 0; c<f->m; c++){
+//         /* On cherche les clauses à valeurs positives !*/
+//         if(f->clauses[c].nb_lit<nb_lit_min && f->clauses[c].positif[0]){
+//             nb_lit_min = f->clauses[c].nb_lit ;
+//             c_min = f->clauses[c] ;
+//         }
+//     }
+//     assert(nb_lit_min>1); // sinon on n'appelerait pas h
+//     return c_min.vars[0];
+// }
+
+/* On cherche ici la variable qui aurait le plus d'impact */
     /* La variable est présente en positif sur exactement quatre clauses (ligne, colonne, bloc, case) 
     (en effet, si on a résolu une de ces clauses, alors on sait ou placer le chiffre dans cette zone) */
     /* La présence de la variable négative dépend de la taille de ces zones */
     /* Du fait de l'exploration parallèle des deux cas, l'approche visant à maximiser le nombre d'occurences
     du litéral négatif est contre-intuitive, il s'agit plutôt de maximiser son impact à l'aide d'une petite clause */
     /* On va donc simplement affiner l'heuristique précédente */
-    
+var heuristique_1(k_cnf f){
     u_int8_t* count = malloc(2*9*9*9*sizeof(u_int8_t));
     assert(count!=NULL);
     for(int i = 0; i<1458; i++){
@@ -282,7 +303,7 @@ var heuristique_1(k_cnf f){
     for(int c = 0; c<f->m; c++){
         /* On cherche les clauses à valeurs positives !*/
         for(int i = 0; i<f->clauses[c].nb_lit; i++){
-            if(f->clauses[c].positif[i]&&(f->clauses[c].nb_lit<nb_lit_min || (f->clauses[c].nb_lit==nb_lit_min && count[f->clauses[c].vars[i].i + 9*f->clauses[c].vars[i].j + 81* f->clauses[c].vars[i].k] > count[best_var.i + 9*best_var.j + 81*best_var.k]))){
+            if(f->clauses[c].positif[i]&&(f->clauses[c].nb_lit<nb_lit_min || (f->clauses[c].nb_lit==nb_lit_min && count[f->clauses[c].vars[i].i + 9*f->clauses[c].vars[i].j + 81* f->clauses[c].vars[i].k] < count[best_var.i + 9*best_var.j + 81*best_var.k]))){
                 nb_lit_min = f->clauses[c].nb_lit ;
                 best_var = f->clauses[c].vars[i] ;
             }
@@ -294,7 +315,42 @@ var heuristique_1(k_cnf f){
 }
 
 
+var heuristique_2(k_cnf f){
+    u_int8_t* count = malloc(2*9*9*9*sizeof(u_int8_t));
+    assert(count!=NULL);
+    for(int i = 0; i<1458; i++){
+        count[i]=0;
+    }
+    for(int c = 0; c<f->m; c++){
+        clause cl = f->clauses[c] ;
+        for(int i = 0; i<cl.nb_lit; i++){
+            int indice = cl.vars[i].i + 9*cl.vars[i].j + 81*cl.vars[i].k ;
+            if(cl.positif[i]){
+                indice+=729 ;
+            }
+            count[indice]++;
+        }
+    }
+    for(int i = 730; i<1458; i++){
+        assert(count[i]==0 || count[i]==4);
+    }
 
+    assert(f->m>0);
+    int nb_lit_max = 42; 
+    var best_var ;
+    for(int c = 0; c<f->m; c++){
+        /* On cherche les clauses à valeurs positives !*/
+        for(int i = 0; i<f->clauses[c].nb_lit; i++){
+            if(f->clauses[c].positif[i]&&(f->clauses[c].nb_lit<nb_lit_max || (f->clauses[c].nb_lit==nb_lit_max && count[f->clauses[c].vars[i].i + 9*f->clauses[c].vars[i].j + 81* f->clauses[c].vars[i].k] > count[best_var.i + 9*best_var.j + 81*best_var.k]))){
+                nb_lit_max = f->clauses[c].nb_lit ;
+                best_var = f->clauses[c].vars[i] ;
+            }
+        }
+    }
+    assert(nb_lit_max<=9); // sinon on n'appelerait pas h
+    free(count);
+    return best_var;
+}
 
 void substitue(var v, bool b, k_cnf f){
     /* Met la variable v à la valeur b dans f */

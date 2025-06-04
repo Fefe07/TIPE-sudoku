@@ -84,7 +84,6 @@ bool solve_notes(grid_t g, bool(**techniques)(grid_t g), int n) {
   /* techniques est un tableau de pointeurs de fonctions, qui sont les techniques de résolution (hors backtracking) */
   /* n est le nombre d'éléments de techniques */
 
-  bool ok = true ;
 
   int i = 0 ;
   while(i<n){
@@ -101,6 +100,7 @@ bool solve_notes(grid_t g, bool(**techniques)(grid_t g), int n) {
   }
 
   // teste successivement les techniques, dans l'ordre croissant des difficultés
+  // bool ok = true ;
   // while (ok) {
   //   if(!est_ok(g->grid)){
   //     return false;

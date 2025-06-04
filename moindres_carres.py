@@ -18,16 +18,22 @@ n,p = m.shape
 ######## Sélectionne les données utiles
 m = np.delete(m,range(n-2,n),0)
 y = np.delete(m,range(p-1),1)
-m = np.delete(m,p-1,1)
+#m = np.delete(m,p-1,1)
+
+
 
 n,p = m.shape
 
+# autorise un coeff constant
+for i in range(n) :
+    m[i,p-1] = 1
 
 
-for i in range(n):
-    y[i]+=1
 
 print("n =", n) 
+
+
+
 
 
 """ Ancienne version
@@ -59,7 +65,8 @@ print("x=",x)
 """
 mt = np.linalg.matrix_transpose(m)
 x = np.linalg.lstsq(mt*m,mt*y)[0]
-print("x = ", x)
+print("x = ", np.linalg.matrix_transpose(x))
+
 
 # Calcule l'écart-type
 variance = 0
@@ -72,7 +79,7 @@ for i in range(n) :
     variance += (diff - y[i])**2
 variance /= n
 print("variance = ",variance)
-print("ecart-type = ",np.sqrt(variance))
+#print("ecart-type = ",np.sqrt(variance))
 
 ######## Calcule la corrélation #######
 
@@ -90,6 +97,8 @@ y2 = n*[42]
 for i in range(n):
     y2[i] = y[i,0]
 identite = range(n)
+
+
 
 ### Tri
 t = []
@@ -120,19 +129,23 @@ for i in range(n):
 # plt.scatter(identite,y2, label = "Difficulté donnée")
 # plt.xlabel("Sudokus")
 # plt.ylabel("Difficulté(réel arbitraire)")
-plt.scatter(y2,d, s = 20)
+plt.scatter(y2,d, s = 20, label = "Corrélation = %f" %(np.array(corr)[0][0]))
 #plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
 plt.xlabel("difficulté donnée par la base")
 plt.ylabel("Difficulté calculée")
 plt.title("Méthode analytique")
 
-#plt.legend()
+plt.legend()
 
 plt.show()
 
 
 
 ########## m2 prend en compte les coeffs constants ###########
+
+m = np.delete(m,p-1,1)
+n,p = np.shape(m)
+
 #n = n+10
 m2 = []
 #print(m)
@@ -149,7 +162,7 @@ m2 = np.matrix(m2)
 ## Cette procéudre fait le même travail que les lignes suivantes, je l'ai découverte après
 m2t =np.linalg.matrix_transpose(m2)
 x2 = np.linalg.lstsq(m2t*m2,m2t*y)[0]
-print("x2 = ",x2)
+print("x2 = ",np.linalg.matrix_transpose(x2))
 
 n,p2 = m2.shape
 """ ancienne version : 
@@ -222,19 +235,6 @@ for i in range(n):
 # for i in range(10) :
 #     means[i] = np.average(dc_per_dd[i])
 #     std[i] = np.std(dc_per_dd[i])
-    
-
-#plt.scatter(identite,d, label = "Difficulté calculée")
-#plt.scatter(identite,y2, label = "Difficulté donnée")
-
-plt.scatter(y2,d, s = 20, label = "")
-#plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
-plt.xlabel("Difficulté donnée par la base")
-plt.ylabel("Difficulté calculée")
-plt.title("Méthode analytique - coefficients de première utilisation")
-#plt.legend()
-plt.show()
-
 
 ######## Calcule la corrélation #######
 
@@ -247,3 +247,16 @@ for i in range(n) :
 corr/= (np.std(y2) * np.std(d) * n)
 
 print("correlation = ",corr)
+
+#plt.scatter(identite,d, label = "Difficulté calculée")
+#plt.scatter(identite,y2, label = "Difficulté donnée")
+
+plt.scatter(y2,d, s = 20,  label = "Corrélation = %f" %(np.array(corr)[0][0]))
+#plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
+plt.xlabel("Difficulté donnée par la base")
+plt.ylabel("Difficulté calculée")
+plt.title("Méthode analytique - coefficients de première utilisation")
+plt.legend()
+plt.show()
+
+
