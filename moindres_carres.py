@@ -30,6 +30,7 @@ for i in range(n) :
 
 
 
+
 print("n =", n) 
 
 
@@ -65,8 +66,9 @@ print("x=",x)
 """
 mt = np.linalg.matrix_transpose(m)
 x = np.linalg.lstsq(mt*m,mt*y)[0]
-print("x = ", np.linalg.matrix_transpose(x))
-
+#print("x = ", np.linalg.matrix_transpose(x))
+for i in range(p) :
+    print("%.3f  " %x[i,0], end = "")
 
 # Calcule l'écart-type
 variance = 0
@@ -109,17 +111,17 @@ for i in range(n):
     d[i] = t[i][1]
     y2[i] = t[i][0]
 
-# dc_per_dd = [] 
-# for i in range(10) :
-#     dc_per_dd.append([])
-# means = 10 * [42]
-# std = 10 * [42]
-# for i in range(n):
-#     dc_per_dd[int(y2[i])].append( d[i])
+dc_per_dd = [] 
+for i in range(10) :
+    dc_per_dd.append([])
+means = 10 * [42]
+std = 10 * [42]
+for i in range(n):
+    dc_per_dd[int(y2[i])].append( d[i])
 
-# for i in range(10) :
-#     means[i] = np.average(dc_per_dd[i])
-#     std[i] = np.std(dc_per_dd[i])
+for i in range(10) :
+    means[i] = np.average(dc_per_dd[i])
+    std[i] = np.std(dc_per_dd[i])
     
 
 
@@ -130,10 +132,10 @@ for i in range(n):
 # plt.xlabel("Sudokus")
 # plt.ylabel("Difficulté(réel arbitraire)")
 plt.scatter(y2,d, s = 20, label = "Corrélation = %f" %(np.array(corr)[0][0]))
-#plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
-plt.xlabel("difficulté donnée par la base")
+plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
+plt.xlabel("Difficulté donnée par la base")
 plt.ylabel("Difficulté calculée")
-plt.title("Méthode analytique")
+#plt.title("Méthode analytique")
 
 plt.legend()
 
@@ -162,7 +164,14 @@ m2 = np.matrix(m2)
 ## Cette procéudre fait le même travail que les lignes suivantes, je l'ai découverte après
 m2t =np.linalg.matrix_transpose(m2)
 x2 = np.linalg.lstsq(m2t*m2,m2t*y)[0]
-print("x2 = ",np.linalg.matrix_transpose(x2))
+#print("x2 = ",np.linalg.matrix_transpose(x2))
+print("X2 = ")
+for i in range(p) :
+    print("%.3f  " %x2[i,0], end = "")
+print("")
+for i in range(p) :
+    print("%.3f  " %x2[i+p,0], end = "")
+print("")
 
 n,p2 = m2.shape
 """ ancienne version : 
@@ -224,17 +233,17 @@ for i in range(n):
     d[i] = t[i][1]
     y2[i] = t[i][0]
     
-# dc_per_dd = [] 
-# for i in range(10) :
-#     dc_per_dd.append([])
-# means = 10 * [42]
-# std = 10 * [42]
-# for i in range(n-2):
-#     dc_per_dd[int(y2[i])].append( d[i])
+dc_per_dd = [] 
+for i in range(10) :
+    dc_per_dd.append([])
+means = 10 * [42]
+std = 10 * [42]
+for i in range(n-2):
+    dc_per_dd[int(y2[i])].append( d[i])
 
-# for i in range(10) :
-#     means[i] = np.average(dc_per_dd[i])
-#     std[i] = np.std(dc_per_dd[i])
+for i in range(10) :
+    means[i] = np.average(dc_per_dd[i])
+    std[i] = np.std(dc_per_dd[i])
 
 ######## Calcule la corrélation #######
 
@@ -252,10 +261,10 @@ print("correlation = ",corr)
 #plt.scatter(identite,y2, label = "Difficulté donnée")
 
 plt.scatter(y2,d, s = 20,  label = "Corrélation = %f" %(np.array(corr)[0][0]))
-#plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
+plt.errorbar(range(10), means, std,  marker = "s",  color = "orange", label = "Moyennes et écarts-types")
 plt.xlabel("Difficulté donnée par la base")
 plt.ylabel("Difficulté calculée")
-plt.title("Méthode analytique - coefficients de première utilisation")
+plt.title("Évaluation avec coefficients de première utilisation")
 plt.legend()
 plt.show()
 

@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <stdbool.h>
-#include <stdio.h>
 
 struct grid_s {
 	int** grid ;
@@ -77,17 +76,16 @@ bool est_ok(int** grid){
 }
 
 
-bool solve_notes(grid_t g, bool(**techniques)(grid_t g), int n) {
-
-  
-  
-  /* techniques est un tableau de pointeurs de fonctions, qui sont les techniques de résolution (hors backtracking) */
-  /* n est le nombre d'éléments de techniques */
-
+bool solve_notes(grid_t g, bool(**techniques)(grid_t g), int p) {
+  /* Entrées : - g la grille à traiter */
+  /* - techniques un tableau de pointeurs de fonctions, */
+  /* qui sont les techniques de résolution (hors backtracking) */
+  /* - p le nombre de techniques */
+  /* Applique les techniques par ordre croissant de difficulté */
 
   int i = 0 ;
-  while(i<n){
-    if((*(techniques[i]))(g)){
+  while(i<p){
+    if(techniques[i](g)){
       g->nb_techniques[i] ++ ;
       i = 0;
     }

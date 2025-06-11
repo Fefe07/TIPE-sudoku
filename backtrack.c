@@ -95,7 +95,15 @@ bool backtrack(grid_t g, bool(**techniques)(grid_t), int n){
 			updateNotes(newG, best_row, best_col);
 			g->nb_techniques[12] ++;
 
+			/* Test : ne pas ajouter les techniques futures */
 			newG->nb_techniques = g->nb_techniques ;
+			// newG->nb_techniques  = malloc(13*sizeof(float));
+			// assert(newG->nb_techniques!=NULL);
+			// for(int i = 0; i<13; i++){
+			// 	newG->nb_techniques[i] =0;
+			// }
+			
+			
 			/*
 			int* new_nb_techniques = malloc(10*sizeof(int));
 			assert(new_nb_techniques!=NULL);

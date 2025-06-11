@@ -126,7 +126,7 @@ var heuristique_0(k_cnf f);
 /* Minimum */
 var heuristique_1(k_cnf f);
 /* Maximum */
-var heuristique_1(k_cnf f);
+var heuristique_2(k_cnf f);
 
 void print_tab_int(int *tab, int size) {
 	for (int i = 0; i < size; i++) {
@@ -182,11 +182,9 @@ float *cree_coeffs_first_use() {
 }
 
 
-
-int main() {
-	
-	FILE *h = fopen("results_heuristics/db_B.txt", "w");
-	int results_size = 100 ;
+void test_heuristiques(){
+	FILE *h = fopen("results_heuristics/db_B_heur_2_400.txt", "w");
+	int results_size = 400 ;
 
 	for(int nbGrille = 0; nbGrille<results_size; nbGrille++){
 		grid_one_diff g1 = lecture_db_B(nbGrille+2, "grilles/db_B.csv", 5);
@@ -194,7 +192,7 @@ int main() {
 		printGrid(g1.grid);
 		print_k_cnf(phi);
 
-		int profondeur_max = 20;
+		int profondeur_max = 42;
 
 		int* nb_disjonctions = malloc(profondeur_max*sizeof(int));
 		assert(nb_disjonctions!=NULL);
@@ -205,7 +203,7 @@ int main() {
 			nb_quines[i] = 0;
 		}
 
-		solve_cnf(phi, &heuristique_1, nb_disjonctions, nb_quines);
+		solve_cnf(phi, &heuristique_2, nb_disjonctions, nb_quines);
 		print_tab_int(nb_disjonctions, profondeur_max);
 		print_tab_int(nb_quines, profondeur_max);
 
@@ -226,133 +224,141 @@ int main() {
 		free_grid(g1.grid);
 	}
 	fclose(h);
+}
 
-	// int n = 12 ;
-	// bool(**techniques)(grid_t) = malloc(12*sizeof(bool(*)(grid_t)));
-	// assert(techniques!=NULL);
-	// techniques[0] = &lastFreeCell ;
-	// techniques[1] = (bool(*)(grid_t))&hiddenSingle ;
-	// techniques[5] = (bool(*)(grid_t))&pointingPair ;
-	// techniques[2] = (bool(*)(grid_t))&nakedSingle ;
-	// techniques[3] = (bool(*)(grid_t))&nakedPair ;
-	// techniques[4] = (bool(*)(grid_t))&nakedTriple ;
-
-
-	
-	// techniques[6] = (bool(*)(grid_t))&hiddenPair ;
-
-
-	// techniques[7] = (bool(*)(grid_t))hiddenTriple ;
-
-	// techniques[8] = (bool(*)(grid_t))&boxLineReduction ;
-	// techniques[9] = (bool(*)(grid_t))x_wing ;
-	// techniques[10] = (bool(*)(grid_t))y_wing ;
-	// techniques[11] = (bool(*)(grid_t))swordfish ;
+void test_techniques(){
+	int n = 12 ;
+	bool(**techniques)(grid_t) = malloc(12*sizeof(bool(*)(grid_t)));
+	assert(techniques!=NULL);
+	techniques[0] = &lastFreeCell ;
+	techniques[1] = (bool(*)(grid_t))&nakedSingle ;
+	techniques[2] = (bool(*)(grid_t))&hiddenSingle ;
+	techniques[3] = (bool(*)(grid_t))&pointingPair ;
+	techniques[4] = (bool(*)(grid_t))&nakedPair ;
+	techniques[5] = (bool(*)(grid_t))&hiddenPair ;
+	techniques[6] = (bool(*)(grid_t))&nakedTriple ;
+	techniques[7] = (bool(*)(grid_t))hiddenTriple ;
+	techniques[8] = (bool(*)(grid_t))&boxLineReduction ;
+	techniques[9] = (bool(*)(grid_t))x_wing ;
+	techniques[10] = (bool(*)(grid_t))y_wing ;
+	techniques[11] = (bool(*)(grid_t))swordfish ;
 
 
 
-	// srand(time(NULL));
-	// float *coeffs = cree_coeffs();
-	// float *coeffs_first_use = cree_coeffs_first_use();
+	srand(time(NULL));
+	float *coeffs = cree_coeffs();
+	float *coeffs_first_use = cree_coeffs_first_use();
 
-	// int results_size = 344 ;
-	// FILE *f = fopen("resultats.txt", "w");
+	int results_size = 1000 ;
+	FILE *f = fopen("resultats.txt", "w");
 
 
-	// float **results = malloc(results_size * sizeof(float *));
-	// assert(results != NULL);
-	// float *difficulties = malloc(results_size * sizeof(float));
-	// assert(difficulties != NULL);
+	float **results = malloc(results_size * sizeof(float *));
+	assert(results != NULL);
+	float *difficulties = malloc(results_size * sizeof(float));
+	assert(difficulties != NULL);
 
-	// for (int nbGrille = 0; nbGrille < results_size ; nbGrille++) {
-	// 	if(nbGrille%100 == 0){
-	// 		printf("Grille n %d\n", nbGrille);
-	// 	}
-	// 	grid_diffs g = lecture_db_diffs(nbGrille+2, "grilles/Base_de_donnees_evaluees.csv", 42);
-	// 	//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
+	for (int nbGrille = 0; nbGrille < results_size ; nbGrille++) {
+		if(nbGrille%100 == 0){
+			printf("Grille n %d\n", nbGrille);
+		}
+		grid_one_diff g = lecture_db_B(nbGrille+2, "grilles/db_B.csv", 10);
+		//int** g2 = lecture(nbGrille, "grilles/top50000.txt");
 		
-	// 	//printGrid(g.grid);
-	// 	grid_t g2 = malloc(sizeof(struct grid_s));
-	// 	assert(g2!=NULL);
-	// 	g2->grid = g.grid ;
-	// 	difficulties[nbGrille] = (float) g.D_TR;
-	// 	g2->nb_techniques = malloc(13 * sizeof(float));
-	// 	assert(g2->nb_techniques!=NULL);
-	// 	for (int i = 0; i < 13; i++) {
-	// 		g2->nb_techniques[i] = 0.;
-	// 	}
+		//printGrid(g.grid);
+		grid_t g2 = malloc(sizeof(struct grid_s));
+		assert(g2!=NULL);
+		g2->grid = g.grid ;
+		difficulties[nbGrille] = (float) g.difficulty;
+		g2->nb_techniques = malloc(13 * sizeof(float));
+		assert(g2->nb_techniques!=NULL);
+		for (int i = 0; i < 13; i++) {
+			g2->nb_techniques[i] = 0.;
+		}
 		
-	// 	solve_simple_notes_backtrack(g2, techniques, 12);	
-	// 	if(nbGrille%100 == 0){
-	// 		print_tab_float(g2->nb_techniques, 13);
-	// 	}
-	// 	// print_tab_int(nb_tech, 10);
-	// 	results[nbGrille] = g2->nb_techniques;
-	// 	for (int i = 0; i < 13; i++) {
-	// 		fprintf(f, "%f, ", g2->nb_techniques[i]);
-	// 	}
+		solve_simple_notes_backtrack(g2, techniques, 12);	
+		if(nbGrille%100 == 0){
+			print_tab_float(g2->nb_techniques, 13);
+		}
+		// print_tab_int(nb_tech, 10);
+		results[nbGrille] = g2->nb_techniques;
+		for (int i = 0; i < 13; i++) {
+			fprintf(f, "%f, ", g2->nb_techniques[i]);
+		}
 		
-	// 	fprintf(f, "%f ;\n", difficulties[nbGrille]);
+		fprintf(f, "%f ;\n", difficulties[nbGrille]);
 		
-	// 	free_grid(g.grid);
-	// 	free(g2);
-	// }
+		free_grid(g.grid);
+		free(g2);
+	}
 	
-	// for(int i = 0; i<13; i++){
-	// 	int count = 0 ;
-	// 	for(int j = 0; j<results_size; j++){
-	// 		count += (int) results[j][i];
-	// 	}
-	// 	printf("%d, ", count);
-	// }
-	// printf("\n");
-	
-
-	// calcule_coeffs_neg(coeffs,coeffs_first_use,results,difficulties, results_size);
-	
-	// /* Calcul des coefficients par descente de gradient au formalisme douteux */
-	// for (int i = 0; i < 13; i++) {
-	// 	fprintf(f, "%f, ", coeffs[i]);
-	// }
-	// fprintf(f,"42;\n");
-	// for (int i = 0; i < 13; i++) {
-	// 	fprintf(f, "%f, ", coeffs_first_use[i]);
-	// }
-	// fprintf(f,"42\n");
-
-	// fclose(f);
-
-	// free(coeffs);
-	// free(coeffs_first_use);
-	// for(int i = 0; i<results_size; i++){
-	// 	free(results[i]);
-	// }
-	// free(results);
-	// free(difficulties);
-	// free(techniques);	
+	for(int i = 0; i<13; i++){
+		int count = 0 ;
+		int n = 0;
+		for(int j = 0; j<results_size; j++){
+			count += (int) results[j][i];
+			if (results[j][i]>0.01){
+				n ++;
+			}
+		}
+		printf("%d, %d \n", count, n);
+	}
+	printf("\n");
 	
 
-	// FILE* g = fopen("results_db_0/results_criteria.txt", "w");
-	// for(int i = 0; i<results_size; i++){
-	// 	/* La résolution altère la grille donnée en argument*/
-	// 	//printf("################## Grille n° %d ############\n",i);
-	// 	grid_diffs g1 = lecture_db_diffs(i+2, "grilles/Base_de_donnees_evaluees.csv");
-	// 	int nb_clues = assess_nb_clues(g1.grid);
-
-	// 	float f2 = assess_cnf(g1.grid);
-	// 	int nb_notes = assess_nb_notes(g1.grid);
-	// 	float repartition = assess_repartition(g1.grid);
-	// 	float repartition_valeurs = assess_repartition_valeurs(g1.grid);
-	// 	float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
-	// 	fprintf(g, "%f , %f , %f , %d, %d , %f, %f ",g1.D_TR, f1, f2,nb_clues, nb_notes, repartition, repartition_valeurs);
-	// 	if(i<results_size-1){
-	// 		fprintf(g,";\n");
-	// 	}
-	// }
-	// fclose(g);
-
-
+	calcule_coeffs_neg(coeffs,coeffs_first_use,results,difficulties, results_size);
 	
+	/* Calcul des coefficients par descente de gradient au formalisme douteux */
+	for (int i = 0; i < 13; i++) {
+		fprintf(f, "%f, ", coeffs[i]);
+	}
+	fprintf(f,"42;\n");
+	for (int i = 0; i < 13; i++) {
+		fprintf(f, "%f, ", coeffs_first_use[i]);
+	}
+	fprintf(f,"42\n");
 
+	fclose(f);
+
+	free(coeffs);
+	free(coeffs_first_use);
+	for(int i = 0; i<results_size; i++){
+		free(results[i]);
+	}
+	free(results);
+	free(difficulties);
+	free(techniques);	
+}
+
+void test_criteres(float* coeffs, float* coeffs_first_use){
+	FILE* g = fopen("results_db_0/results_criteria.txt", "w");
+	int results_size = 344 ;
+	for(int i = 0; i<results_size; i++){
+		/* La résolution altère la grille donnée en argument*/
+		//printf("################## Grille n° %d ############\n",i);
+		grid_diffs g1 = lecture_db_diffs(i+2, "grilles/Base_de_donnees_evaluees.csv", 42);
+		int nb_clues = assess_nb_clues(g1.grid);
+
+		float f2 = assess_cnf(g1.grid);
+		int nb_notes = assess_nb_notes(g1.grid);
+		float repartition = assess_repartition(g1.grid);
+		float repartition_valeurs = assess_repartition_valeurs(g1.grid);
+		float f1 = assess_techniques(g1.grid, coeffs, coeffs_first_use);
+		fprintf(g, "%f , %f , %f , %d, %d , %f, %f ",g1.D_TR, f1, f2,nb_clues, nb_notes, repartition, repartition_valeurs);
+		if(i<results_size-1){
+			fprintf(g,";\n");
+		}
+	}
+	fclose(g);
+}
+
+int main() {
+	
+	test_heuristiques();
+
+	//test_techniques() ;
+	
+	// test_criteres();
+	
 	return 0;
 }
