@@ -122,7 +122,7 @@ plt.scatter(y2,d, s = 40, label ="corrélation = %.3f" %(corr[0,0]))
 plt.errorbar(range(cap), means, std, color="orange", marker = "s")
 plt.xlabel("Difficulté donnée")
 plt.ylabel("Difficulté calculée")
-plt.title("Heuristique 3")
+plt.title("Heuristique 1")
 plt.legend()
 plt.show()
 

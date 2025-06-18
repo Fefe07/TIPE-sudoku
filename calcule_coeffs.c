@@ -17,6 +17,15 @@ float* copy(float* tab, int size){
     return t;
 }
 
+float ecart_type(float* tab, int size, float moyenne){
+    float var = 0 ;
+    for(int i = 0; i<size; i++){
+        var += (tab[i]-moyenne)*(tab[i]-moyenne);
+    }
+    var/= 1. *size ;
+    return sqrt(var);
+}
+
 void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, float* difficulties, int results_size){
     /* Calcule les valeurs des tableaux coeffs et coeffs_first_use minimisant l'écart au difficultés, */
     /* selon les moindres carrés */
@@ -27,6 +36,11 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
     float* best_coeffs = copy(coeffs, 13);
     float* best_coeffs_first_use = copy(coeffs_first_use, 13);
     float best_cout = cout ;
+    float diff_donne_moy = 0 ;
+    for(int j =0; j<results_size; j++){
+        diff_donne_moy+=difficulties[j];
+    }
+    diff_donne_moy/=results_size ;
 	int i = 0;
     float T = 10. ;
 	while (T > 0.000001) {
@@ -67,7 +81,30 @@ void calcule_coeffs(float* coeffs, float* coeffs_first_use, float** results, flo
 			float ec = sqrt(cout);
 			printf("ecart-type = %f\n", ec);
             printf("T = %f\n", T);
-			
+            
+            /* Calcule la corrélation*/
+            float diff_calculee_moy = 0 ;
+            float* scores = malloc(results_size*sizeof(float));
+            assert(scores!=NULL);
+            for(int j = 0; j<results_size; j++){
+                float score = 0 ;
+                for(int i2 = 0; i2 < 13; i2++){
+                    if(results[j][i2]>0){
+                        score += coeffs_first_use[i2] +results[j][i2]*coeffs[i2] ;
+                    }
+                }
+                scores[j] = score;
+                diff_calculee_moy+=score ;
+            }
+            diff_calculee_moy/=results_size ;
+            float corr = 0 ;
+            
+
+            for(int j = 0; j<results_size; j++){
+                corr= (difficulties[j]-diff_donne_moy)*(scores[j]-diff_calculee_moy) ;
+            }
+            corr/= ecart_type(scores, results_size, diff_calculee_moy) * ecart_type(difficulties, results_size, diff_donne_moy) * results_size ;
+ 			printf("Corr = %.3f\n", corr);
 		}
 		i++;
 	}
@@ -99,6 +136,11 @@ void calcule_coeffs_neg(float* coeffs, float* coeffs_first_use, float** results,
     float* best_coeffs_first_use = copy(coeffs_first_use, 13);
     float best_cout = cout ;
 	int i = 0;
+    float diff_donne_moy = 0 ;
+    for(int j =0; j<results_size; j++){
+        diff_donne_moy+=difficulties[j];
+    }
+    diff_donne_moy/=results_size ;
     float T = 10. ;
 	while (T > 0.000001) {
 		float* nouveaux_coeffs = copy(coeffs, 13);
@@ -106,10 +148,10 @@ void calcule_coeffs_neg(float* coeffs, float* coeffs_first_use, float** results,
 
 		for (int j = 0; j <13; j++) {
 			nouveaux_coeffs[j] += (-10 + (rand() % 21))/1000.;
-			//nouveaux_coeffs_first_use[j] += (-10 + (rand() % 21))/1000.;
+			nouveaux_coeffs_first_use[j] += (-10 + (rand() % 21))/1000.;
 		}
         float nouveau_cout = calcule_cout(nouveaux_coeffs, nouveaux_coeffs_first_use, results, difficulties, results_size);
-        if(nouveau_cout<cout || (((rand() % 1000000)/1000000.) < expf((cout-nouveau_cout)/T))){
+        if(nouveau_cout<cout || (((rand() % (1<<16))*1./(1<<16)) < expf((cout-nouveau_cout)/T))){
             cout = nouveau_cout ;
             for(int i = 0; i<13; i++){
                 coeffs[i] = nouveaux_coeffs[i];
@@ -139,6 +181,31 @@ void calcule_coeffs_neg(float* coeffs, float* coeffs_first_use, float** results,
 			printf("ecart-type = %f\n", ec);
             printf("T = %f\n", T);
 			
+            /* Calcule la corrélation*/
+            float diff_calculee_moy = 0 ;
+            float* scores = malloc(results_size*sizeof(float));
+            assert(scores!=NULL);
+            for(int j = 0; j<results_size; j++){
+                float score = 0 ;
+                for(int i2 = 0; i2 < 13; i2++){
+                    if(results[j][i2]>0){
+                        score += coeffs_first_use[i2] +results[j][i2]*coeffs[i2] ;
+                    }
+                }
+                scores[j] = score;
+                diff_calculee_moy+=score ;
+            }
+            diff_calculee_moy/=results_size ;
+            float corr = 0 ;
+            
+
+            for(int j = 0; j<results_size; j++){
+                corr= (difficulties[j]-diff_donne_moy)*(scores[j]-diff_calculee_moy) ;
+            }
+            corr/= ecart_type(scores, results_size, diff_calculee_moy) * ecart_type(difficulties, results_size, diff_donne_moy) * results_size ;
+ 			printf("Corr = %.3f\n", corr);
+            free(scores);
+
 		}
 		i++;
 	}

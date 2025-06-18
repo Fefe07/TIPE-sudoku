@@ -57,41 +57,21 @@ for i in range(n):
 
 
 
-diff_per_ni = [] 
-for i in range(9) :
-    diff_per_ni.append([])
-means = 9 * [42]
-std = 9 * [42]
-for i in range(n):
-    diff_per_ni[nombre_indices[i]-24].append( diff_donnee[i])
+cap = 42
 
-for i in range(9) :
+diff_per_ni = [] 
+for i in range(cap) :
+    diff_per_ni.append([])
+means = cap * [42]
+std = cap * [42]
+for i in range(cap):
+    diff_per_ni[nombre_indices[i]].append( diff_donnee[i])
+
+for i in range(cap) :
     means[i] = np.average(diff_per_ni[i])
     std[i] = np.std(diff_per_ni[i])
     
 
-
-
-
-print("n=",n)
-identite = range(n)
-
-#plt.semilogy()
-#plt.scatter(identite,diff_calculee, label="Difficulté calculée")
-#plt.scatter(identite, diff_donnee, s=20, label="Difficulté donnée")
-#plt.scatter(identite, density,s=20, label="Densité")
-#plt.scatter(diff_donnee,nombre_indices, s=20, label="Difficulté donnée")
-#plt.scatter(range(24,33), means, s = 60,label = "Difficulté moyenne")
-#plt.errorbar(means,range(24,33),xerr= std, linestyle='None', marker ='s', mfc = 'orange', mec = "orange", ecolor = "orange", label = "Moyennes et écarts-types")
-#plt.scatter(diff_donnee, nb_notes, s=20, label="Nombre de candidats")
-#plt.scatter(diff_donnee, repartition, s=20, label="Répartition géographique")
-plt.scatter(diff_donnee, repartition_valeurs, s=20, label="Répartition des valeurs")
-#plt.scatter(identite, mix, s=20, label ="Mix")
-plt.ylabel("Répartition des valeurs")
-plt.xlabel("Difficulté donnée par la base")
-#plt.title("Recuit simulé avec coeffs de première utilisation")
-#plt.legend()
-plt.show()
 
 
 
@@ -145,3 +125,24 @@ print("corr_12 =", corr_12)
 print("corr_35 = ",corr_35)
 print("corr_06 = ", corr_06)
 print("corr_07 = ", corr_07)
+
+
+#plt.semilogy()
+#plt.scatter(identite,diff_calculee, label="Difficulté calculée")
+#plt.scatter(identite, diff_donnee, s=20, label="Difficulté donnée")
+#plt.scatter(identite, density,s=20, label="Densité")
+#plt.scatter(diff_donnee,nombre_indices, s=20, label="Difficulté donnée")
+#plt.scatter(range(24,33), means, s = 60,label = "Difficulté moyenne")
+#plt.errorbar(means,range(24,33),xerr= std, linestyle='None', marker ='s', mfc = 'orange', mec = "orange", ecolor = "orange", label = "Moyennes et écarts-types")
+plt.scatter(diff_donnee, nb_notes, s=20, label="Nombre de candidats, corr = %.3f" %corr_04)
+#plt.scatter(diff_donnee, repartition, s=20, label="Répartition géographique")
+#plt.scatter(diff_donnee, repartition_valeurs, s=20, label="Correlation = %.3f" %corr_06)
+#plt.scatter(identite, mix, s=20, label ="Mix")
+plt.ylabel("Répartition des valeurs")
+plt.xlabel("Difficulté donnée par la base")
+#plt.title("Recuit simulé avec coeffs de première utilisation")
+plt.legend()
+plt.show()
+
+
+
