@@ -6,7 +6,7 @@ Il exploite séparément deux approches :
 
 Ce projet a été réalisé dans le cadre des TIPE (travaux d'initiative personnelle encadrés), une initiation à la démarche de chercheur ou d'ingénieur en classes préparatoires aux grandes écoles.  
 
-Ce TIPE a donné lieu à un rapport écrit (format papier de recherche) [rapport](rapport_et_pdg.pdf)  
+Ce TIPE a donné lieu à un rapport écrit (format papier de recherche) [rapport](Rapport_et_pdg.pdf)  
 Il a aussi été présenté à l'oral à l'aide du diaporama suivant : [diaporama](diapo_v6_code.pdf)
 
 
