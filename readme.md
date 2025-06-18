@@ -6,7 +6,8 @@ Il exploite séparément deux approches :
 
 Ce projet a été réalisé dans le cadre des TIPE (travaux d'initiative personnelle encadrés), une initiation à la démarche de chercheur ou d'ingénieur en classes préparatoires aux grandes écoles.  
 
-Une présentation associée à ce projet sera disponible fin mai 2025.
+Ce TIPE a donné lieu à un rapport écrit (format papier de recherche) [rapport](rapport_et_pdg.pdf)  
+Il a aussi été présenté à l'oral à l'aide du diaporama suivant : [diaporama](diapo_v6_code.pdf)
 
 
 ## Calcul des techniques humaines nécéssaires
@@ -46,3 +47,7 @@ Fonctions associées : assess_\*.c, main.c, print\_results\_criteria.py
 
 Cette méthode repose sur la conversion préalable d'une grille de sudoku en instance du problème 9-SAT, effectué par sudoku\_to\_cnf.c.  
 La formule obtenue est ensuite résolue par un algorithme de Quine.
+
+
+
+
